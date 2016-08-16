@@ -1,5 +1,7 @@
 /RaynetAB_Test13/Saved/*
 /RaynetAB_Test13/Intermediate/*
+/RaynetAB_Test13/Binaries/*
 *.sdf
 RaynetAB_Test13/RaynetAB_Test13.VC.opendb
 RaynetAB_Test13/.vs/RaynetAB_Test13/v14/.suo
+*.pdb
