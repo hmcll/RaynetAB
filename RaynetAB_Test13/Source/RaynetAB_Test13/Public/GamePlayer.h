@@ -5,6 +5,10 @@
 #include "GameFramework/Actor.h"
 #include "GamePlayer.generated.h"
 
+/*
+Class holds details and movement of a player
+*/
+
 UENUM ( BlueprintType )
 enum class PawnType: uint8 {
 	Link, Virus, Null
@@ -26,8 +30,9 @@ class RAYNETAB_TEST13_API AGamePlayer : public AActor
 	GENERATED_BODY()
 	
 public:	
+	AGamePlayer ();
 	// Sets default values for this actor's properties
-	AGamePlayer();
+	AGamePlayer(int32 playerID);
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -46,6 +51,8 @@ public:
 	UPROPERTY ( BlueprintReadWrite, EditAnywhere )
 		TArray<bool>_terminal;
 
+	int32 _playerID;
+
 	TWeakObjectPtr<AGamePlayer> _enemy;
 
 	void setEnemy ( TWeakObjectPtr<AGamePlayer> EnemyPlayer );
@@ -61,5 +68,4 @@ public:
 		bool getTerminalUse ( TerminalCard card );
 	UFUNCTION ( BlueprintCallable, Category = "default" )
 		void setTerminalUse ( TerminalCard card, bool state );
-	
 };
