@@ -1,8 +1,8 @@
 {
 	"Changelist" : 3039270,
-	"BuildId" : "9f35a948-a2e3-4082-a6c6-c243e73ff9e8",
+	"BuildId" : "",
 	"Modules" : 
 	{
-		"RaynetAB_Test13" : "UE4Editor-RaynetAB_Test13-8147.dll"
+		"RaynetAB_Test13" : "UE4Editor-RaynetAB_Test13.dll"
 	}
 }

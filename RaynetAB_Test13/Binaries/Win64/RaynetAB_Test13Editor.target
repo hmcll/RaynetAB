@@ -2,7 +2,7 @@
 	"TargetName" : "RaynetAB_Test13Editor",
 	"Platform" : "Win64",
 	"Configuration" : "Development",
-	"BuildId" : "9f35a948-a2e3-4082-a6c6-c243e73ff9e8",
+	"BuildId" : "",
 	"Version" : 
 	{
 		"MajorVersion" : 4,
@@ -15,15 +15,15 @@
 	"BuildProducts" :
 	[
 		{
-			"Path" : "$(ProjectDir)/Binaries/Win64/UE4Editor-RaynetAB_Test13-8147.dll",
+			"Path" : "$(ProjectDir)/Binaries/Win64/UE4Editor-RaynetAB_Test13.dll",
 			"Type" : "DynamicLibrary"
 		},
 		{
-			"Path" : "$(ProjectDir)/Binaries/Win64/UE4Editor-RaynetAB_Test13-8147.pdb",
+			"Path" : "$(ProjectDir)/Binaries/Win64/UE4Editor-RaynetAB_Test13.pdb",
 			"Type" : "SymbolFile"
 		},
 		{
-			"Path" : "$(ProjectDir)/Intermediate/Build/Win64/UE4Editor/Development/UE4Editor-RaynetAB_Test13-8147.lib",
+			"Path" : "$(ProjectDir)/Intermediate/Build/Win64/UE4Editor/Development/UE4Editor-RaynetAB_Test13.lib",
 			"Type" : "ImportLibrary"
 		}
 	],
