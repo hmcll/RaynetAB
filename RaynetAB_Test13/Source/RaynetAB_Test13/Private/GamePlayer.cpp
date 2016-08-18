@@ -18,8 +18,9 @@ void AGamePlayer::Tick( float DeltaTime )
 
 }
 
-AGamePlayer::AGamePlayer () {
-	AGamePlayer ( 0 );
+AGamePlayer::AGamePlayer ()
+	:
+	_playerID ( 0 ) {
 }
 
 AGamePlayer::AGamePlayer ( int32 playerID ):

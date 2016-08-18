@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Engine/LevelScriptActor.h"
-#include "GamePlayer.h"
+#include "ChessBoard.h"
 #include "GameMain_Map.generated.h"
 
 /**
