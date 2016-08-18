@@ -18,12 +18,8 @@ void AGamePlayer::Tick( float DeltaTime )
 
 }
 
-AGamePlayer::AGamePlayer () {
-	AGamePlayer ( 0 );
-}
 
-AGamePlayer::AGamePlayer ( int32 playerID ):
-	_playerID(playerID){
+AGamePlayer::AGamePlayer () {
 	PrimaryActorTick.bCanEverTick = false;
 
 	_terminal.Init ( false, 4 );
