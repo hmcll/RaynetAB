@@ -2,7 +2,7 @@
 	"TargetName" : "RaynetAB_Test13Editor",
 	"Platform" : "Win64",
 	"Configuration" : "Development",
-	"BuildId" : "fd8ada0b-1b57-4221-b1fa-5072bc0749b3",
+	"BuildId" : "a7b9edce-1569-4ae3-ae1f-a2956471703e",
 	"Version" : 
 	{
 		"MajorVersion" : 4,
@@ -83,6 +83,10 @@
 		},
 		{
 			"Path" : "$(EngineDir)/Plugins/Experimental/HTML5Networking/HTML5Networking.uplugin",
+			"Type" : "UFS"
+		},
+		{
+			"Path" : "$(EngineDir)/Plugins/Marketplace/LowEntryExtStdLib/LowEntryExtStdLib.uplugin",
 			"Type" : "UFS"
 		},
 		{
