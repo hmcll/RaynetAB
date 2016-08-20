@@ -10,6 +10,5 @@ void AGameMain_Map::BeginPlay () {
 	Enemy = (AGamePlayer*) GetWorld ()->SpawnActor ( AGamePlayer::StaticClass () );
 	Me->setEnemy ( Enemy );
 	Enemy->setEnemy ( Me );
-	Board = new ChessBoard ( Me, Enemy );
 	AfterBeginPlay ();
 }
