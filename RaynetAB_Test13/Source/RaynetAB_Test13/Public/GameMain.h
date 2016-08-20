@@ -11,9 +11,6 @@
 UCLASS()
 class RAYNETAB_TEST13_API UGameMain : public UUserWidget
 {
-	GENERATED_BODY()
-	
-	
-	
-	
+	GENERATED_BODY ()
+public:
 };

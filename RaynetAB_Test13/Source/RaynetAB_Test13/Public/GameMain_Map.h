@@ -21,7 +21,10 @@ public:
 	UPROPERTY ( BlueprintReadWrite, Category = "Players" )
 		TWeakObjectPtr<AGamePlayer> Enemy;
 
+		ChessBoard* Board;
+
 	void BeginPlay () override;
-	
-	
+
+	UFUNCTION ( BlueprintImplementableEvent )
+		void AfterBeginPlay ();
 };
