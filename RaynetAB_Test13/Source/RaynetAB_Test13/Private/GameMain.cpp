@@ -4,3 +4,10 @@
 #include "GameMain.h"
 
 
+void UGameMain::init () {
+	Me = (AGamePlayer*) GetWorld ()->SpawnActor ( AGamePlayer::StaticClass () );
+	Enemy = (AGamePlayer*) GetWorld ()->SpawnActor ( AGamePlayer::StaticClass () );
+	Me->setEnemy ( Enemy );
+	Enemy->setEnemy ( Me );
+	chessBoard = TSharedPtr<ChessBoard> ( new ChessBoard ( Me, Enemy ) );
+}

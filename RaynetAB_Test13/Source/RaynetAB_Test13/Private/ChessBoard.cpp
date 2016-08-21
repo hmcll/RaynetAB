@@ -9,8 +9,9 @@ ChessBoard::ChessBoard ( TWeakObjectPtr<AGamePlayer> Me, TWeakObjectPtr<AGamePla
 	_Enemy ( Enemy ) {
 	//Initalize
 	for ( int i = 0; i < 8; i++ ) {
+		chessBoard.AddZeroed ();
 		for ( int j = 0; j < 8; j++ ) {
-			chessBoard[i][j] = TSharedPtr<Pawn> ((Pawn* )new Null () );
+			chessBoard[i].Add ( TSharedPtr<Null> ( new Null () ) );
 		}
 	}
 }
@@ -54,9 +55,7 @@ bool ChessBoard::SetPawn_B ( int Pattern ) {
 	}
 	return true;
 }
-const Board & ChessBoard::getChessBoard () {
-	return chessBoard;
-}
+
 bool ChessBoard::LineBoost ( TWeakObjectPtr<AGamePlayer> player, Place place ) {
 	if ( !chessBoard[place.X][place.Y]->isMoveable () )
 		return false;
@@ -64,7 +63,7 @@ bool ChessBoard::LineBoost ( TWeakObjectPtr<AGamePlayer> player, Place place ) {
 	if ( MoveablePlace->getPlayer ()->_playerID != player->_playerID )
 		return false;
 	if ( player->getTerminalUse ( TerminalCard::LineBoost ) == TERMINALCARD_USED ) {
-		if ( !( MoveablePlace->isLineboosting () ) ) {
+		if ( !( MoveablePlace->isLineBoosting () ) ) {
 			return false;
 		}
 		player->setTerminalUse ( TerminalCard::LineBoost, TERMINALCARD_UNUSED );
@@ -72,7 +71,7 @@ bool ChessBoard::LineBoost ( TWeakObjectPtr<AGamePlayer> player, Place place ) {
 	}
 	else {
 
-		if ( ( MoveablePlace->isLineboosting () ) ) {
+		if ( ( MoveablePlace->isLineBoosting () ) ) {
 			return false;
 		}
 		player->setTerminalUse ( TerminalCard::LineBoost, TERMINALCARD_USED );
@@ -126,8 +125,8 @@ bool ChessBoard::NotFoundSwap ( TWeakObjectPtr<AGamePlayer> player, Place from, 
 	auto Mofrom = ( (Moveable*) chessBoard[from.X][from.Y].Get () );
 	auto Moto = ( (Moveable*) chessBoard[to.X][to.Y].Get () );
 	{
-		bool temp = Mofrom->isLineboosting ();
-		Mofrom->setLineBoost ( Moto->isLineboosting () );
+		bool temp = Mofrom->isLineBoosting ();
+		Mofrom->setLineBoost ( Moto->isLineBoosting () );
 		Moto->setLineBoost ( temp );
 	}
 	Mofrom->setShowingOff ( false );
@@ -149,10 +148,10 @@ bool ChessBoard::NotFoundNoSwap ( TWeakObjectPtr<AGamePlayer> player, Place from
 	return false;
 }
 // Not Including the entering server part.
-TArray<Place> ChessBoard::ShowMoveablePoint ( Place pawn ) {
+bool ChessBoard::ShowMoveablePoint ( Place pawn ) {
 	TArray<Place> points;
 	if ( chessBoard[pawn.X][pawn.Y]->getType () != PawnType::Null )
-		if ( ( (Moveable*) ( chessBoard[pawn.X][pawn.Y].Get () ) )->isLineboosting () ) {
+		if ( ( (Moveable*) ( chessBoard[pawn.X][pawn.Y].Get () ) )->isLineBoosting () ) {
 			TArray<int32> joints;
 			joints.Init ( 0, 4 );
 			enum direction {
@@ -205,8 +204,7 @@ TArray<Place> ChessBoard::ShowMoveablePoint ( Place pawn ) {
 				points.Add ( {pawn.X, pawn.Y - 1} );
 		}
 	else {
-		points.Empty ();
-		return points;
+		return false;
 	}
 	for ( int32 i = 0; i < points.Num (); i++ ) {
 		if ( points[i] == Place ( -1, -1 ) )continue;
@@ -226,9 +224,16 @@ TArray<Place> ChessBoard::ShowMoveablePoint ( Place pawn ) {
 			}
 		}
 	}
-	return{points, true};
+	for ( int32 i = 0; i < points.Num (); i++ ) {
+		if ( points[i] == Place ( -1, -1 ) ) MovePointServer = true;
+		chessBoard[points[i].X][points[i].Y]->setMovePoint ( true );
+	}
+	return true;
 }
 
+bool ChessBoard::getMovePointServer () {
+	return MovePointServer;
+}
 
 bool ChessBoard::Move ( Place from, Place to ) {
 	if ( !chessBoard[from.X][from.Y]->isMoveable () )
@@ -265,6 +270,17 @@ bool ChessBoard::MoveToServer ( Place from ) {
 		return false;
 }
 
+TArray<TArray<ShowType>> ChessBoard::Refresh () {
+	TArray < TArray<ShowType>> EnumBoard;
+	for ( int i = 0; i < 8; i++ ) {
+		EnumBoard.AddZeroed ( 1);
+		for ( int j = 0; j < 8; j++ ) {
+			EnumBoard[i].Add(chessBoard[i][j]->toEnum ());
+		}
+	}
+	return EnumBoard;
+}
+
 Link::Link ( TWeakObjectPtr<AGamePlayer> player ) {
 	_player = player;
 	_type = PawnType::Link;
@@ -285,17 +301,25 @@ TWeakObjectPtr<AGamePlayer> Pawn::getPlayer () const {
 	return _player;
 }
 
+void Pawn::setMovePoint ( const bool state ) {
+	_IsMovePoint = state;
+}
+
+bool Pawn::isMovePoint () const {
+	return _IsMovePoint;
+}
+
 Null::Null () {
 	_player = nullptr;
 	_type = PawnType::Link;
 }
 
 void Null::setFirewall ( const  bool state ) {
-	FireWallOn = true;
+	_IsFireWallOn = true;
 }
 
 bool Null::isFirewallOn () const {
-	return FireWallOn;
+	return _IsFireWallOn;
 }
 
 TWeakObjectPtr<AGamePlayer> Null::getPlayer () const {
@@ -316,7 +340,7 @@ bool Moveable::isMoveable () const {
 	return true;
 }
 
-bool Moveable::isLineboosting () const {
+bool Moveable::isLineBoosting () const {
 	return _IsLineBoosting;
 }
 
@@ -334,4 +358,83 @@ void Moveable::setShowingOff ( const bool state ) {
 
 bool Null::isMoveable () const {
 	return false;
+}
+
+ShowType Null::toEnum () {
+	if ( _IsMovePoint ) return ShowType::MovePioint;
+	if ( _IsFireWallOn ) return ShowType::FireWall;
+	return ShowType::Null;
+}
+ShowType Virus::toEnum () {
+	if ( _player->_playerID == 0 )
+		if ( _IsLineBoosting )
+			if ( _IsShowingOff )
+				return ShowType::VirusYLO;
+			else
+				return ShowType::VirusYO;
+		else
+			if ( _IsShowingOff )
+				return ShowType::VirusYL;
+			else
+				return ShowType::VirusY;
+	else
+		if ( _IsShowingOff )
+			if ( _IsLineBoosting )
+				if ( _IsMovePoint )
+					return ShowType::VirusBLM;
+				else
+					return ShowType::VirusBL;
+			else
+				if ( _IsMovePoint )
+					return ShowType::VirusBM;
+				else
+					return ShowType::VirusB;
+		else
+			if ( _IsLineBoosting )
+				if ( _IsMovePoint )
+					return ShowType::BackBLM;
+				else
+					return ShowType::BackBL;
+			else
+				if ( _IsMovePoint )
+					return ShowType::BackBM;
+				else
+					return ShowType::BackB;
+}
+
+ShowType Link::toEnum () {
+	if ( _player->_playerID == 0 )
+		if ( _IsLineBoosting )
+			if ( _IsShowingOff )
+				return ShowType::LinkYLO;
+			else
+				return ShowType::LinkYO;
+		else
+			if ( _IsShowingOff )
+				return ShowType::LinkYL;
+			else
+				return ShowType::LinkY;
+	else
+		if ( _IsShowingOff )
+			if ( _IsLineBoosting )
+				if ( _IsMovePoint )
+					return ShowType::LinkBLM;
+				else
+					return ShowType::LinkBL;
+			else
+				if ( _IsMovePoint )
+					return ShowType::LinkBM;
+				else
+					return ShowType::LinkB;
+		else
+			if ( _IsLineBoosting )
+				if ( _IsMovePoint )
+					return ShowType::BackBLM;
+				else
+					return ShowType::BackBL;
+			else
+				if ( _IsMovePoint )
+					return ShowType::BackBM;
+				else
+					return ShowType::BackB;
 }

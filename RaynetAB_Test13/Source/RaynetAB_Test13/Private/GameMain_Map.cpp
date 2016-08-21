@@ -6,9 +6,5 @@
 
 
 void AGameMain_Map::BeginPlay () {
-	Me = (AGamePlayer*)GetWorld ()->SpawnActor ( AGamePlayer::StaticClass ());
-	Enemy = (AGamePlayer*) GetWorld ()->SpawnActor ( AGamePlayer::StaticClass () );
-	Me->setEnemy ( Enemy );
-	Enemy->setEnemy ( Me );
 	AfterBeginPlay ();
 }

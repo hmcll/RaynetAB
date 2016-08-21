@@ -15,16 +15,9 @@ class RAYNETAB_TEST13_API AGameMain_Map : public ALevelScriptActor
 	GENERATED_BODY ()
 public:
 
-	UPROPERTY ( BlueprintReadWrite ,Category = "Players")
-		TWeakObjectPtr<AGamePlayer> Me;
-
-	UPROPERTY ( BlueprintReadWrite, Category = "Players" )
-		TWeakObjectPtr<AGamePlayer> Enemy;
-
-		ChessBoard* Board;
-
 	void BeginPlay () override;
 
+	
 	UFUNCTION ( BlueprintImplementableEvent )
 		void AfterBeginPlay ();
 };
