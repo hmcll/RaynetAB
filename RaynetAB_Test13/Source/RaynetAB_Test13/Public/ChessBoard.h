@@ -23,32 +23,6 @@ enum class State:uint8 {
 	OnLine, Server, DataBase
 };
 
-UENUM ( BlueprintType )
-enum class ShowType:uint8 {
-	BackB,
-	BackBL,
-	BackBM,
-	BackBLM,
-	LinkBM,
-	LinkBLM,
-	LinkB,
-	LinkBL,
-	LinkY,
-	LinkYL,
-	LinkYO,
-	LinkYLO,
-	VirusB,
-	VirusBL,
-	VirusBM,
-	VirusBLM,
-	VirusY,
-	VirusYL,
-	VirusYO,
-	VirusYLO,
-	MovePioint,
-	FireWall,
-	Null,
-};
 
 /*
 A place on the Board
@@ -57,16 +31,16 @@ A place on the Board
 class Pawn {
 protected:
 	TWeakObjectPtr<AGamePlayer> _player;
-	PawnType _type;
-	bool _IsMovePoint;
+	ShowType _type;
+	bool _IsMovePoint = false;
 public:
-	virtual ShowType toEnum () = 0;
+	virtual FPawnType toFPawnType () = 0;
 	virtual ~Pawn ();
 	//is able to move
 	void setMovePoint ( const bool state );
 	bool isMovePoint () const;
 	virtual bool isMoveable () const = 0;
-	PawnType getType () const;
+	ShowType getType () const;
 	virtual	TWeakObjectPtr<AGamePlayer> getPlayer () const;
 };
 /*
@@ -76,12 +50,15 @@ class Moveable: public Pawn {
 protected:
 	bool _IsLineBoosting = false;
 	bool _IsShowingOff = false;
+	bool _IsSelected = false;
 public:
 	bool isMoveable () const override;
 	bool isLineBoosting () const;
 	void setLineBoost ( const bool state );
 	bool isShowingOff () const;
 	void setShowingOff ( const bool state );
+	bool isSelected () const;
+	void setSelected ( const bool state );
 };
 
 /*
@@ -90,8 +67,8 @@ Link card
 
 class Link: public Moveable {
 public:
-	ShowType toEnum () override;
-	Link ( TWeakObjectPtr<AGamePlayer>  player );
+	FPawnType toFPawnType () override;
+	Link ( TWeakObjectPtr<AGamePlayer> player );
 	~Link () override;
 };
 
@@ -101,9 +78,9 @@ Virus card
 
 class Virus: public Moveable {
 public:
-	ShowType toEnum () override;
+	FPawnType toFPawnType () override;
 	Virus ( TWeakObjectPtr<AGamePlayer>  player );
-	~Virus ()										override;
+	~Virus () override;
 };
 
 /*
@@ -112,9 +89,9 @@ Empty Place or Firewall
 
 class Null: public Pawn {
 private:
-	bool _IsFireWallOn;
+	bool _IsFireWallOn = false;
 public:
-	ShowType toEnum () override;
+	FPawnType toFPawnType () override;
 	Null ();
 	void setFirewall ( const bool state );
 	bool isFirewallOn () const;	
@@ -131,11 +108,10 @@ class ChessBoard {
 	TWeakObjectPtr<AGamePlayer> _Enemy;
 	
 	bool MovePointServer = false;
-
 public:
 	ChessBoard ( TWeakObjectPtr<AGamePlayer> Me, TWeakObjectPtr<AGamePlayer> Enemy);
-	bool SetPawn_Y ( int Pattern );
-	bool SetPawn_B ( int Pattern );
+	bool SetPawn_Y ( TArray<ShowType> Setting );
+	bool SetPawn_B ( TArray<ShowType> Setting );
 	bool getMovePointServer ();
 	bool LineBoost ( TWeakObjectPtr<AGamePlayer> player, Place place );
 	bool FireWall ( TWeakObjectPtr<AGamePlayer> player, Place place );
@@ -145,5 +121,5 @@ public:
 	bool ShowMoveablePoint ( Place pawn );
 	bool Move ( Place from, Place to );
 	bool MoveToServer ( Place from );
-	TArray<TArray<ShowType>> Refresh ();
+	TArray<FPawnType> Refresh ();
 };

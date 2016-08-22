@@ -50,15 +50,18 @@ bool AGamePlayer::Win () {
 	return false;
 }
 
-bool AGamePlayer::addToServer ( const PawnType Type ) {
+bool AGamePlayer::addToServer ( const ShowType Type ) {
 	switch ( Type ) {
-	case PawnType::Link:
+	case ShowType::LinkYL:
+		setTerminalUse ( TerminalCard::LineBoost, true );
+	case ShowType::LinkY:
 		_server_L++;
 		break;
-	case PawnType::Virus:
+	case ShowType::VirusYL:
+		setTerminalUse ( TerminalCard::LineBoost, true );
+	case ShowType::VirusY:
 		_server_V++;
 		break;
-	case PawnType::Null:
 	default:
 		return false;
 		break;
@@ -66,15 +69,18 @@ bool AGamePlayer::addToServer ( const PawnType Type ) {
 	return true;
 }
 
-bool AGamePlayer::addToDataBase ( PawnType Type ) {
+bool AGamePlayer::addToDataBase ( ShowType Type ) {
 	switch ( Type ) {
-	case PawnType::Link:
+	case ShowType::LinkYL:
+		setTerminalUse ( TerminalCard::LineBoost, true );
+	case ShowType::LinkY:
 		_dataBase_L++;
 		break;
-	case PawnType::Virus:
+	case ShowType::VirusYL:
+		setTerminalUse ( TerminalCard::LineBoost, true );
+	case ShowType::VirusY:
 		_dataBase_V++;
 		break;
-	case PawnType::Null:
 	default:
 		return false;
 		break;
@@ -90,5 +96,6 @@ void AGamePlayer::setTerminalUse ( TerminalCard card, bool state ) {
 	_terminal[int ( card )] = state;
 }
 
-
-
+void AGamePlayer::setID ( int32 ID ) {
+	_playerID = ID;
+}

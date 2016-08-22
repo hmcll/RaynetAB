@@ -22,8 +22,26 @@ public:
 	UPROPERTY ( BlueprintReadWrite, Category = "Players" )
 		TWeakObjectPtr<AGamePlayer> Enemy;
 
+	UPROPERTY ( BlueprintReadWrite, Category = "Players" )
+	bool MeGoingFirst = true;
+
 	TSharedPtr<ChessBoard> chessBoard;
 
 	UFUNCTION ( BlueprintCallable , Category = "Functions" )
 		void init ();
+
+	UFUNCTION ( BlueprintCallable, Category = "Functions" )
+		bool Confirm (TArray<TEnumAsByte<ShowType>> Setting);
+
+	UFUNCTION ( BlueprintCallable, Category = "Functions" )
+		TArray<FPawnType> Refresh ();
+
+	UFUNCTION ( BlueprintCallable, Category = "Functions" )
+		void ShowMoveablePoint (FVector2D from);
+
+	UFUNCTION ( BlueprintCallable, Category = "Functions" )
+		bool ShowMovePointToServer ();
+
+	UFUNCTION ( BlueprintCallable, Category = "Functions" )
+		void ShowMoveablePoint_Card ( TEnumAsByte<TerminalCard> card );
 };

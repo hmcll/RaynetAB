@@ -20,18 +20,17 @@ To initalize Yellow Pawns (MyPawn)
 @Param
 @Pattern Right to Left 1 = Virus 0 = Link
 */
-bool ChessBoard::SetPawn_Y ( int Pattern ) {
+bool ChessBoard::SetPawn_Y ( TArray<ShowType> Setting ) {
 	TArray<int32> Y;
 	Y.Init ( 0, 8 );
 	Y[3] = 1;
 	Y[4] = 1;
 	for ( int i = 0; i < 8; i++ ) {
 
-		if ( Pattern % 2 )
+		if ( Setting[i] == ShowType::VirusY )
 			chessBoard[i][Y[i]] = TSharedPtr<Virus> ( new Virus ( _Me ) );
 		else
 			chessBoard[i][Y[i]] = TSharedPtr<Link> ( new Link ( _Me ) );
-		Pattern >>= 1;
 	}
 	return true;
 }
@@ -41,17 +40,16 @@ To initalize Blue Pawns (EnemyPawn)
 @Param
 @Pattern Right to Left 1 = Virus 0 = Link
 */
-bool ChessBoard::SetPawn_B ( int Pattern ) {
+bool ChessBoard::SetPawn_B ( TArray<ShowType> Setting ) {
 	TArray<int32> Y;
 	Y.Init ( 7, 8 );
 	Y[3] = 6;
 	Y[4] = 6;
 	for ( int i = 0; i < 8; i++ ) {
-		if ( Pattern % 2 )
+		if ( Setting[i] == ShowType::VirusY )
 			chessBoard[i][Y[i]] = TSharedPtr<Virus> ( new Virus ( _Enemy ) );
 		else
 			chessBoard[i][Y[i]] = TSharedPtr<Link> ( new Link ( _Enemy ) );
-		Pattern >>= 1;
 	}
 	return true;
 }
@@ -80,6 +78,10 @@ bool ChessBoard::LineBoost ( TWeakObjectPtr<AGamePlayer> player, Place place ) {
 	return true;
 }
 bool ChessBoard::FireWall ( TWeakObjectPtr<AGamePlayer> player, Place place ) {
+	if ( place.Y == 7 || place.Y == 0 )return false;
+	if ( place.X == 4 || place.X == 3 )
+		if ( place.Y == 6 || place.Y == 1 )
+			return false;
 	if ( chessBoard[place.X][place.Y]->isMoveable () )
 		return false;
 	auto NullPlace = (Null*) chessBoard[place.X][place.Y].Get ();;
@@ -150,7 +152,7 @@ bool ChessBoard::NotFoundNoSwap ( TWeakObjectPtr<AGamePlayer> player, Place from
 // Not Including the entering server part.
 bool ChessBoard::ShowMoveablePoint ( Place pawn ) {
 	TArray<Place> points;
-	if ( chessBoard[pawn.X][pawn.Y]->getType () != PawnType::Null )
+	if ( chessBoard[pawn.X][pawn.Y]->getType () != ShowType::Null )
 		if ( ( (Moveable*) ( chessBoard[pawn.X][pawn.Y].Get () ) )->isLineBoosting () ) {
 			TArray<int32> joints;
 			joints.Init ( 0, 4 );
@@ -270,12 +272,11 @@ bool ChessBoard::MoveToServer ( Place from ) {
 		return false;
 }
 
-TArray<TArray<ShowType>> ChessBoard::Refresh () {
-	TArray < TArray<ShowType>> EnumBoard;
+TArray<FPawnType> ChessBoard::Refresh () {
+	TArray <FPawnType> EnumBoard;
 	for ( int i = 0; i < 8; i++ ) {
-		EnumBoard.AddZeroed ( 1);
 		for ( int j = 0; j < 8; j++ ) {
-			EnumBoard[i].Add(chessBoard[i][j]->toEnum ());
+			EnumBoard.Add ( chessBoard[j][i]->toFPawnType () );
 		}
 	}
 	return EnumBoard;
@@ -283,7 +284,8 @@ TArray<TArray<ShowType>> ChessBoard::Refresh () {
 
 Link::Link ( TWeakObjectPtr<AGamePlayer> player ) {
 	_player = player;
-	_type = PawnType::Link;
+
+	_type = player->_playerID == 0 ? ShowType::LinkY : ShowType::LinkB;
 }
 
 Link::~Link () {
@@ -292,7 +294,7 @@ Link::~Link () {
 Pawn::~Pawn () {
 }
 
-PawnType Pawn::getType () const {
+ShowType Pawn::getType () const {
 	return _type;
 }
 
@@ -311,7 +313,7 @@ bool Pawn::isMovePoint () const {
 
 Null::Null () {
 	_player = nullptr;
-	_type = PawnType::Link;
+	_type = ShowType::Null;
 }
 
 void Null::setFirewall ( const  bool state ) {
@@ -331,7 +333,7 @@ Null::~Null () {
 
 Virus::Virus ( TWeakObjectPtr<AGamePlayer>  player ) {
 	_player = player;
-	_type = PawnType::Virus;
+	_type = player->_playerID == 0 ? ShowType::VirusY : ShowType::VirusB;
 }
 
 Virus::~Virus () {
@@ -356,85 +358,66 @@ void Moveable::setShowingOff ( const bool state ) {
 	_IsShowingOff = state;
 }
 
+bool Moveable::isSelected () const {
+	return _IsSelected;
+}
+void Moveable::setSelected ( const bool state ) {
+	_IsSelected = false;
+}
+
 bool Null::isMoveable () const {
 	return false;
 }
 
-ShowType Null::toEnum () {
-	if ( _IsMovePoint ) return ShowType::MovePioint;
-	if ( _IsFireWallOn ) return ShowType::FireWall;
-	return ShowType::Null;
+FPawnType Null::toFPawnType () {
+	FPawnType ret;
+	ret._IsMovePoint = _IsMovePoint;
+	ret._Type = _IsFireWallOn ? ShowType::FireWall : ShowType::Null;
+	return ret;
 }
-ShowType Virus::toEnum () {
-	if ( _player->_playerID == 0 )
-		if ( _IsLineBoosting )
-			if ( _IsShowingOff )
-				return ShowType::VirusYLO;
-			else
-				return ShowType::VirusYO;
+FPawnType Virus::toFPawnType () {
+	FPawnType ret;
+	if ( _player->_playerID == 0 ) 
+		if ( _IsLineBoosting ) 
+			ret._Type = ShowType::VirusYL;
 		else
-			if ( _IsShowingOff )
-				return ShowType::VirusYL;
-			else
-				return ShowType::VirusY;
+			ret._Type = ShowType::VirusY;
 	else
-		if ( _IsShowingOff )
+		if ( _IsShowingOff ) 
 			if ( _IsLineBoosting )
-				if ( _IsMovePoint )
-					return ShowType::VirusBLM;
-				else
-					return ShowType::VirusBL;
+				ret._Type = ShowType::VirusBL;
 			else
-				if ( _IsMovePoint )
-					return ShowType::VirusBM;
-				else
-					return ShowType::VirusB;
-		else
+				ret._Type = ShowType::VirusB;
+		else 
 			if ( _IsLineBoosting )
-				if ( _IsMovePoint )
-					return ShowType::BackBLM;
-				else
-					return ShowType::BackBL;
+				ret._Type = ShowType::BackBL;
 			else
-				if ( _IsMovePoint )
-					return ShowType::BackBM;
-				else
-					return ShowType::BackB;
+				ret._Type = ShowType::BackB;
+	ret._IsMovePoint = _IsMovePoint;
+	ret._IsShowingOff = _IsShowingOff;
+	return ret;
 }
 
-ShowType Link::toEnum () {
+FPawnType Link::toFPawnType () {
+	FPawnType ret;
 	if ( _player->_playerID == 0 )
 		if ( _IsLineBoosting )
-			if ( _IsShowingOff )
-				return ShowType::LinkYLO;
-			else
-				return ShowType::LinkYO;
+			ret._Type = ShowType::LinkYL;
 		else
-			if ( _IsShowingOff )
-				return ShowType::LinkYL;
-			else
-				return ShowType::LinkY;
+			ret._Type = ShowType::LinkY;
 	else
 		if ( _IsShowingOff )
 			if ( _IsLineBoosting )
-				if ( _IsMovePoint )
-					return ShowType::LinkBLM;
-				else
-					return ShowType::LinkBL;
+				ret._Type = ShowType::LinkBL;
 			else
-				if ( _IsMovePoint )
-					return ShowType::LinkBM;
-				else
-					return ShowType::LinkB;
+				ret._Type = ShowType::LinkB;
 		else
 			if ( _IsLineBoosting )
-				if ( _IsMovePoint )
-					return ShowType::BackBLM;
-				else
-					return ShowType::BackBL;
+				ret._Type = ShowType::BackBL;
 			else
-				if ( _IsMovePoint )
-					return ShowType::BackBM;
-				else
-					return ShowType::BackB;
+				ret._Type = ShowType::BackB;
+	ret._IsMovePoint = _IsMovePoint;
+	ret._IsShowingOff = _IsShowingOff;
+	return ret;
 }
+
