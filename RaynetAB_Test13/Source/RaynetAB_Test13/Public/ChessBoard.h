@@ -8,8 +8,7 @@
  *
  */
 
-const bool TERMINALCARD_UNUSED = true;
-const bool TERMINALCARD_USED = true;
+
 
 //first = x second = y
 typedef FVector2D Place;
@@ -113,6 +112,7 @@ public:
 	bool SetPawn_Y ( TArray<ShowType> Setting );
 	bool SetPawn_B ( TArray<ShowType> Setting );
 	bool getMovePointServer ();
+	void clearMovePoint ();
 	bool LineBoost ( TWeakObjectPtr<AGamePlayer> player, Place place );
 	bool FireWall ( TWeakObjectPtr<AGamePlayer> player, Place place );
 	bool VirusCheck ( TWeakObjectPtr<AGamePlayer> player, Place place );

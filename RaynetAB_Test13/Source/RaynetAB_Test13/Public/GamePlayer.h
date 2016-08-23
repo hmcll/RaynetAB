@@ -9,6 +9,9 @@
 Class holds details and movement of a player
 */
 
+const bool TERMINALCARD_UNUSED = false;
+const bool TERMINALCARD_USED = true;
+
 UENUM ( BlueprintType )
 enum class WinState: uint8 {
 	Normal, Win, fail,
@@ -35,6 +38,11 @@ enum class TerminalCard: uint8 {
 	LineBoost = 0, Firewall = 1, VirusCheck = 2, NotFound = 3
 };
 
+UENUM ( BlueprintType )
+enum class ServerShowingOff: uint8 {
+	Link,Virus,Null
+};
+
 USTRUCT ( BlueprintType )
 struct FPawnType {
 	GENERATED_BODY ()
@@ -43,8 +51,8 @@ struct FPawnType {
 		bool _IsShowingOff = false;
 	UPROPERTY (  BlueprintReadWrite, Category = "PawnType" )
 		bool _IsMovePoint = false;
-	UPROPERTY (  BlueprintReadWrite, Category = "PawnType" )
-		bool _IsSelected = false;
+//	UPROPERTY (  BlueprintReadWrite, Category = "PawnType" )
+//		bool _IsSelected = false;
 	UPROPERTY (  BlueprintReadWrite, Category = "PawnType" )
 		TEnumAsByte<ShowType> _Type;
 };
@@ -67,15 +75,19 @@ public:
 	virtual void Tick( float DeltaSeconds ) override;
 
 	UPROPERTY ( BlueprintReadWrite, EditAnywhere )
-		int32 _server_V;
+		int32 _server_V = 0;
 	UPROPERTY ( BlueprintReadWrite, EditAnywhere )
-		int32 _server_L;
+		int32 _server_L = 0;
 	UPROPERTY ( BlueprintReadWrite, EditAnywhere )
-		int32 _dataBase_V;
+		int32 _dataBase_V = 0;
 	UPROPERTY ( BlueprintReadWrite, EditAnywhere )
-		int32 _dataBase_L;
+		int32 _dataBase_L = 0;
 	UPROPERTY ( BlueprintReadWrite, EditAnywhere )
 		TArray<bool>_terminal;
+	UPROPERTY ( BlueprintReadWrite, EditAnywhere )
+		TEnumAsByte<ServerShowingOff> Showingoff = ServerShowingOff::Null;
+
+
 
 	int32 _playerID;
 
@@ -85,14 +97,15 @@ public:
 	void setID ( int32 ID );
 
 	TWeakObjectPtr<AGamePlayer> getEnemy ();
+
 	UFUNCTION ( BlueprintCallable, Category = "default" )
 		bool Win ();
-	UFUNCTION ( BlueprintCallable, Category = "default" )
-		bool addToServer ( ShowType Type );
-	UFUNCTION ( BlueprintCallable, Category = "default" )
-		bool addToDataBase ( ShowType Type );
-	UFUNCTION ( BlueprintCallable, Category = "default" )
+
+		bool addToServer ( bool isShowingOff, bool islineboosting, ShowType Type );
+
+		bool addToDataBase ( bool islineboosting,ShowType Type );
+
 		bool getTerminalUse ( TerminalCard card );
-	UFUNCTION ( BlueprintCallable, Category = "default" )
+
 		void setTerminalUse ( TerminalCard card, bool state );
 };

@@ -31,6 +31,7 @@ TArray<FPawnType>  UGameMain::Refresh () {
 }
 
 void UGameMain::ShowMoveablePoint ( FVector2D from ) {
+	chessBoard->clearMovePoint ();
 	chessBoard->ShowMoveablePoint (from);
 }
 
@@ -39,5 +40,38 @@ bool UGameMain::ShowMovePointToServer () {
 }
 
 void UGameMain::ShowMoveablePoint_Card ( TEnumAsByte<TerminalCard> card ) {
+	chessBoard->clearMovePoint ();
 
+}
+
+void UGameMain::ClearMovePoint () {
+	chessBoard->clearMovePoint ();
+}
+
+bool UGameMain::LineBoost_BP (int32 playerID , FVector2D place ) {
+	return chessBoard->LineBoost ( playerID == 0 ? Me : Enemy, place );
+}
+
+bool UGameMain::FireWall_BP ( int32 playerID , FVector2D place ) {
+	return chessBoard->FireWall( playerID == 0 ? Me : Enemy,place);
+}
+
+bool UGameMain::VirusCheck_BP ( int32 playerID , FVector2D place ) {
+	return chessBoard->VirusCheck( playerID == 0 ? Me : Enemy,place);
+}
+
+bool UGameMain::NotFoundSwap_BP ( int32 playerID, FVector2D from, FVector2D to ) {
+	return chessBoard->NotFoundSwap ( playerID == 0 ? Me : Enemy, from, to );
+}
+
+bool UGameMain::NotFoundNoSwap_BP ( int32 playerID , FVector2D from, FVector2D to ) {
+	return chessBoard->NotFoundNoSwap( playerID == 0 ? Me : Enemy, from, to );
+}
+
+bool  UGameMain::Move ( FVector2D from, FVector2D to ) {
+	return chessBoard->Move ( from, to );
+}
+
+bool  UGameMain::MoveToServer ( FVector2D from ) {
+	return chessBoard->MoveToServer ( from);
 }

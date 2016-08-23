@@ -44,4 +44,29 @@ public:
 
 	UFUNCTION ( BlueprintCallable, Category = "Functions" )
 		void ShowMoveablePoint_Card ( TEnumAsByte<TerminalCard> card );
+
+	UFUNCTION ( BlueprintCallable, Category = "Functions" )
+		void ClearMovePoint ();
+
+	UFUNCTION ( BlueprintCallable, Category = "Functions" )
+		bool LineBoost_BP (int32 playerID, FVector2D place );
+
+	UFUNCTION ( BlueprintCallable, Category = "Functions" )
+		bool FireWall_BP ( int32 playerID, FVector2D place );
+
+	UFUNCTION ( BlueprintCallable, Category = "Functions" )
+		bool VirusCheck_BP ( int32 playerID, FVector2D place );
+
+	UFUNCTION ( BlueprintCallable, Category = "Functions" )
+		bool NotFoundSwap_BP ( int32 playerID, FVector2D from, FVector2D to );
+
+	UFUNCTION ( BlueprintCallable, Category = "Functions" )
+		bool NotFoundNoSwap_BP ( int32 playerID, FVector2D from, FVector2D to );
+
+	UFUNCTION ( BlueprintCallable, Category = "Functions" )
+		bool Move ( FVector2D from, FVector2D to );
+
+	UFUNCTION ( BlueprintCallable, Category = "Functions" )
+		bool MoveToServer ( FVector2D from );
+
 };

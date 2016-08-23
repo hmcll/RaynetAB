@@ -165,35 +165,41 @@ bool ChessBoard::ShowMoveablePoint ( Place pawn ) {
 				joints[left] = ( !chessBoard[pawn.X - 1][pawn.Y]->isMoveable () );
 			if ( pawn.Y < 7 )
 				joints[up] = ( !chessBoard[pawn.X][pawn.Y + 1]->isMoveable () );
-			else if ( pawn.X == 3 || pawn.X == 4 )
-				points.Add ( {-1,-1} );
 			if ( pawn.Y > 0 )
 				joints[down] = ( !chessBoard[pawn.X][pawn.Y - 1]->isMoveable () );
+			
 
 			if ( pawn.X < 6 && joints[right] )
 				points.Add ( {pawn.X + 2, pawn.Y} );
-
 			if ( pawn.X > 1 && joints[left] )
 				points.Add ( {pawn.X - 2, pawn.Y} );
-
 			if ( pawn.Y < 6 && joints[up] )
 				points.Add ( {pawn.X, pawn.Y + 2} );
-			else if ( pawn.X == 3 || pawn.X == 4 )
-				points.Add ( {-1,-1} );
-
 			if ( pawn.Y > 1 && joints[down] )
 				points.Add ( {pawn.X, pawn.Y - 2} );
 
+
 			if ( pawn.X < 7 && pawn.Y < 7 && ( joints[up] || joints[right] ) )
 				points.Add ( {pawn.X + 1, pawn.Y + 1} );
-			else if ( pawn.Y == 7 || ( pawn.X == 3 || pawn.X == 4 ) )
-				points.Add ( Place ( -1, -1 ) );
-			if ( pawn.X < 7 && pawn.Y > 0 && ( joints[up] || joints[left] ) )
+			if ( pawn.X < 7 && pawn.Y > 0 && ( joints[down] || joints[right] ) )
 				points.Add ( {pawn.X + 1, pawn.Y - 1} );
-			if ( pawn.X > 0 && pawn.Y < 7 && ( joints[down] || joints[right] ) )
+			if ( pawn.X > 0 && pawn.Y < 7 && ( joints[up] || joints[left] ) )
 				points.Add ( {pawn.X - 1, pawn.Y + 1} );
 			if ( pawn.X > 0 && pawn.Y > 0 && ( joints[down] || joints[left] ) )
 				points.Add ( {pawn.X - 1, pawn.Y - 1} );
+
+			if ( pawn.Y == 7 ) {
+				if ( pawn.X == 2 && joints[right])
+					points.Add ( {-1,-1} );
+				if ( pawn.X == 5 && joints[left] )
+					points.Add ( {-1,-1} );
+				if(pawn.X==3 || pawn.X == 4 )
+					points.Add ( {-1,-1} );
+			}
+			else if ( pawn.Y == 6 ) {
+				if (joints[up]&&( pawn.X == 3 || pawn.X == 4 ))
+					points.Add ( {-1,-1} );
+			}
 		}
 		else {
 			if ( pawn.X < 7 )
@@ -204,6 +210,8 @@ bool ChessBoard::ShowMoveablePoint ( Place pawn ) {
 				points.Add ( {pawn.X, pawn.Y + 1} );
 			if ( pawn.Y > 0 )
 				points.Add ( {pawn.X, pawn.Y - 1} );
+			if (pawn.Y==7 &&( pawn.X == 3 || pawn.X == 4 ))
+				points.Add ( {-1,-1} );
 		}
 	else {
 		return false;
@@ -211,25 +219,30 @@ bool ChessBoard::ShowMoveablePoint ( Place pawn ) {
 	for ( int32 i = 0; i < points.Num (); i++ ) {
 		if ( points[i] == Place ( -1, -1 ) )continue;
 		if ( chessBoard[points[i].X][points[i].Y]->isMoveable () ) {
-			if ( chessBoard[pawn.X][pawn.Y]->getPlayer ().IsValid () || chessBoard[points[i].X][points[i].Y]->getPlayer ().IsValid () ) {
-				points.RemoveAt ( i );
+			if ( !chessBoard[pawn.X][pawn.Y]->getPlayer ().IsValid () || !chessBoard[points[i].X][points[i].Y]->getPlayer ().IsValid () ) {
+				points.RemoveAt ( i-- );
 				continue;
 			}
 			if ( chessBoard[pawn.X][pawn.Y]->getPlayer ()->_playerID == chessBoard[points[i].X][points[i].Y]->getPlayer ()->_playerID ) {
-				points.RemoveAt ( i );
+				points.RemoveAt ( i-- );
 				continue;
 			}
 		}
 		else {
 			if ( ( (Null*) chessBoard[points[i].X][points[i].Y].Get () )->isFirewallOn () ) {
-				points.RemoveAt ( i );
+				points.RemoveAt ( i-- );
 			}
 		}
 	}
+	bool movetoServer = false;
 	for ( int32 i = 0; i < points.Num (); i++ ) {
-		if ( points[i] == Place ( -1, -1 ) ) MovePointServer = true;
+		if ( points[i] == Place ( -1, -1 ) ) {
+			movetoServer = true;
+			continue;
+		}
 		chessBoard[points[i].X][points[i].Y]->setMovePoint ( true );
 	}
+	MovePointServer = movetoServer;
 	return true;
 }
 
@@ -241,35 +254,31 @@ bool ChessBoard::Move ( Place from, Place to ) {
 	if ( !chessBoard[from.X][from.Y]->isMoveable () )
 		return false;
 	if ( chessBoard[to.X][to.Y]->isMoveable () ) {
-		if ( chessBoard[from.X][from.Y]->getPlayer ().IsValid () || chessBoard[to.X][to.Y]->getPlayer ().IsValid () )
+		if ( !chessBoard[from.X][from.Y]->getPlayer ().IsValid () || !chessBoard[to.X][to.Y]->getPlayer ().IsValid () )
 			return false;
 		if ( chessBoard[from.X][from.Y]->getPlayer ()->_playerID == chessBoard[to.X][to.Y]->getPlayer ()->_playerID )
 			return false;
-		chessBoard[from.X][from.Y]->getPlayer ()->addToDataBase ( chessBoard[to.X][to.Y]->getType () );
+		if(!chessBoard[from.X][from.Y]->getPlayer ()->addToDataBase ( ((Moveable*)(chessBoard[to.X][to.Y].Get()))->isLineBoosting() , chessBoard[to.X][to.Y]->getType() ))return false;
 		chessBoard[to.X][to.Y].Reset ();
 		chessBoard[to.X][to.Y] = TSharedPtr<Null> ( new Null () );
-		//Swap<TSharedPtr<Pawn>>(chessBoard[from.X][from.Y],chessBoard[to.X][to.Y]);
+		Swap<TSharedPtr<Pawn>>(chessBoard[from.X][from.Y],chessBoard[to.X][to.Y]);
 	}
 	else {
 		if ( ( (Null*) chessBoard[to.X][to.Y].Get () )->isFirewallOn () ) {
 			return false;
 		}
-		//Swap<TSharedPtr<Pawn>> ( chessBoard[from.X][from.Y], chessBoard[to.X][to.Y] );
+		Swap<TSharedPtr<Pawn>> ( chessBoard[from.X][from.Y], chessBoard[to.X][to.Y] );
 	}
 	return true;
 }
 
 bool ChessBoard::MoveToServer ( Place from ) {
-	if ( from.Y == 7 && ( from.X == 4 || from.X == 3 ) ) {
-		if ( !chessBoard[from.X][from.Y]->isMoveable () )
-			return false;
-		chessBoard[from.X][from.Y]->getPlayer ()->getEnemy ()->addToServer ( chessBoard[from.X][from.Y]->getType () );
-		chessBoard[from.X][from.Y].Reset ();
-		chessBoard[from.X][from.Y] = TSharedPtr<Null> ( new Null () );
-		return true;
-	}
-	else
+	if ( !chessBoard[from.X][from.Y]->isMoveable () )
 		return false;
+	if ( !chessBoard[from.X][from.Y]->getPlayer ()->getEnemy ()->addToServer ( ( (Moveable*) ( chessBoard[from.X][from.Y].Get () ) )->isShowingOff(), ( (Moveable*) ( chessBoard[from.X][from.Y].Get () ) )->isLineBoosting (), chessBoard[from.X][from.Y]->getType () ) )return false;
+	chessBoard[from.X][from.Y].Reset ();
+	chessBoard[from.X][from.Y] = TSharedPtr<Null> ( new Null () );
+	return true;
 }
 
 TArray<FPawnType> ChessBoard::Refresh () {
@@ -421,3 +430,11 @@ FPawnType Link::toFPawnType () {
 	return ret;
 }
 
+void ChessBoard::clearMovePoint () {
+	MovePointServer = false;
+	for ( int i = 0; i < 8; i++ ) {
+		for ( int j = 0; j < 8; j++ ) {
+			chessBoard[i][j]->setMovePoint ( false );
+		}
+	}
+}

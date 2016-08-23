@@ -50,34 +50,33 @@ bool AGamePlayer::Win () {
 	return false;
 }
 
-bool AGamePlayer::addToServer ( const ShowType Type ) {
+bool AGamePlayer::addToServer (bool isShowingOff, bool islineboosting, const ShowType Type ) {
 	switch ( Type ) {
-	case ShowType::LinkYL:
-		setTerminalUse ( TerminalCard::LineBoost, true );
+	case ShowType::LinkB:
 	case ShowType::LinkY:
 		_server_L++;
+		Showingoff = isShowingOff ? ServerShowingOff::Link : ServerShowingOff::Null;
 		break;
-	case ShowType::VirusYL:
-		setTerminalUse ( TerminalCard::LineBoost, true );
+	case ShowType::VirusB:
 	case ShowType::VirusY:
 		_server_V++;
+		Showingoff = isShowingOff ? ServerShowingOff::Virus : ServerShowingOff::Null;
 		break;
 	default:
 		return false;
 		break;
 	}
+	if ( islineboosting )_enemy->setTerminalUse ( TerminalCard::LineBoost, TERMINALCARD_UNUSED );
 	return true;
 }
 
-bool AGamePlayer::addToDataBase ( ShowType Type ) {
+bool AGamePlayer::addToDataBase (bool islineboosting, ShowType Type ) {
 	switch ( Type ) {
-	case ShowType::LinkYL:
-		setTerminalUse ( TerminalCard::LineBoost, true );
+	case ShowType::LinkB:
 	case ShowType::LinkY:
 		_dataBase_L++;
 		break;
-	case ShowType::VirusYL:
-		setTerminalUse ( TerminalCard::LineBoost, true );
+	case ShowType::VirusB:
 	case ShowType::VirusY:
 		_dataBase_V++;
 		break;
@@ -85,6 +84,7 @@ bool AGamePlayer::addToDataBase ( ShowType Type ) {
 		return false;
 		break;
 	}
+	if (islineboosting )setTerminalUse ( TerminalCard::LineBoost, TERMINALCARD_UNUSED );
 	return true;
 }
 
