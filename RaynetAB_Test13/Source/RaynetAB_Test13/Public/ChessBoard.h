@@ -89,12 +89,14 @@ Empty Place or Firewall
 class Null: public Pawn {
 private:
 	bool _IsFireWallOn = false;
+	TWeakObjectPtr<AGamePlayer> FireWallPlayer;
 public:
 	FPawnType toFPawnType () override;
 	Null ();
 	void setFirewall ( const bool state );
 	bool isFirewallOn () const;	
 	TWeakObjectPtr<AGamePlayer> getPlayer () const override;
+	bool setFireWallPlayer ( TWeakObjectPtr<AGamePlayer> player);
 	bool isMoveable () const override;
 	~Null () override;
 };
@@ -119,6 +121,7 @@ public:
 	bool NotFoundSwap ( TWeakObjectPtr<AGamePlayer> player, Place from, Place to );
 	bool NotFoundNoSwap ( TWeakObjectPtr<AGamePlayer> player, Place from, Place to );
 	bool ShowMoveablePoint ( Place pawn );
+	void ShowMoveablePoint_Card ( int32 PlayerID, TerminalCard card );
 	bool Move ( Place from, Place to );
 	bool MoveToServer ( Place from );
 	TArray<FPawnType> Refresh ();

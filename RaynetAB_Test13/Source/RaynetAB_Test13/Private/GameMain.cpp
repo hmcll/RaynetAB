@@ -39,9 +39,9 @@ bool UGameMain::ShowMovePointToServer () {
 	return chessBoard->getMovePointServer ();
 }
 
-void UGameMain::ShowMoveablePoint_Card ( TEnumAsByte<TerminalCard> card ) {
+void UGameMain::ShowMoveablePoint_Card (int32 PlayerID, TEnumAsByte<TerminalCard> card ) {
 	chessBoard->clearMovePoint ();
-
+	chessBoard->ShowMoveablePoint_Card ( PlayerID, card );
 }
 
 void UGameMain::ClearMovePoint () {

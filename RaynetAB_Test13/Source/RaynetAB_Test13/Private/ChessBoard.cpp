@@ -84,7 +84,7 @@ bool ChessBoard::FireWall ( TWeakObjectPtr<AGamePlayer> player, Place place ) {
 			return false;
 	if ( chessBoard[place.X][place.Y]->isMoveable () )
 		return false;
-	auto NullPlace = (Null*) chessBoard[place.X][place.Y].Get ();;
+	auto NullPlace = (Null*) chessBoard[place.X][place.Y].Get ();
 	if ( player->getTerminalUse ( TerminalCard::Firewall ) == TERMINALCARD_USED ) {
 		if ( !NullPlace->isFirewallOn () ) {
 			return false;
@@ -92,8 +92,8 @@ bool ChessBoard::FireWall ( TWeakObjectPtr<AGamePlayer> player, Place place ) {
 		if ( NullPlace->getPlayer ()->_playerID != player->_playerID ) {
 			return false;
 		}
-		player->setTerminalUse ( TerminalCard::Firewall, TERMINALCARD_UNUSED );
 		NullPlace->setFirewall ( false );
+		player->setTerminalUse ( TerminalCard::Firewall, TERMINALCARD_UNUSED );
 	}
 	else {
 		if ( ( NullPlace->isFirewallOn () ) ) {
@@ -101,6 +101,7 @@ bool ChessBoard::FireWall ( TWeakObjectPtr<AGamePlayer> player, Place place ) {
 		}
 		player->setTerminalUse ( TerminalCard::Firewall, TERMINALCARD_USED );
 		NullPlace->setFirewall ( true );
+		NullPlace->setFireWallPlayer ( player );
 	}
 	return true;
 }
@@ -167,7 +168,7 @@ bool ChessBoard::ShowMoveablePoint ( Place pawn ) {
 				joints[up] = ( !chessBoard[pawn.X][pawn.Y + 1]->isMoveable () );
 			if ( pawn.Y > 0 )
 				joints[down] = ( !chessBoard[pawn.X][pawn.Y - 1]->isMoveable () );
-			
+
 
 			if ( pawn.X < 6 && joints[right] )
 				points.Add ( {pawn.X + 2, pawn.Y} );
@@ -189,15 +190,15 @@ bool ChessBoard::ShowMoveablePoint ( Place pawn ) {
 				points.Add ( {pawn.X - 1, pawn.Y - 1} );
 
 			if ( pawn.Y == 7 ) {
-				if ( pawn.X == 2 && joints[right])
+				if ( pawn.X == 2 && joints[right] )
 					points.Add ( {-1,-1} );
 				if ( pawn.X == 5 && joints[left] )
 					points.Add ( {-1,-1} );
-				if(pawn.X==3 || pawn.X == 4 )
+				if ( pawn.X == 3 || pawn.X == 4 )
 					points.Add ( {-1,-1} );
 			}
 			else if ( pawn.Y == 6 ) {
-				if (joints[up]&&( pawn.X == 3 || pawn.X == 4 ))
+				if ( joints[up] && ( pawn.X == 3 || pawn.X == 4 ) )
 					points.Add ( {-1,-1} );
 			}
 		}
@@ -210,7 +211,7 @@ bool ChessBoard::ShowMoveablePoint ( Place pawn ) {
 				points.Add ( {pawn.X, pawn.Y + 1} );
 			if ( pawn.Y > 0 )
 				points.Add ( {pawn.X, pawn.Y - 1} );
-			if (pawn.Y==7 &&( pawn.X == 3 || pawn.X == 4 ))
+			if ( pawn.Y == 7 && ( pawn.X == 3 || pawn.X == 4 ) )
 				points.Add ( {-1,-1} );
 		}
 	else {
@@ -258,10 +259,10 @@ bool ChessBoard::Move ( Place from, Place to ) {
 			return false;
 		if ( chessBoard[from.X][from.Y]->getPlayer ()->_playerID == chessBoard[to.X][to.Y]->getPlayer ()->_playerID )
 			return false;
-		if(!chessBoard[from.X][from.Y]->getPlayer ()->addToDataBase ( ((Moveable*)(chessBoard[to.X][to.Y].Get()))->isLineBoosting() , chessBoard[to.X][to.Y]->getType() ))return false;
+		if ( !chessBoard[from.X][from.Y]->getPlayer ()->addToDataBase ( ( (Moveable*) ( chessBoard[to.X][to.Y].Get () ) )->isLineBoosting (), chessBoard[to.X][to.Y]->getType () ) )return false;
 		chessBoard[to.X][to.Y].Reset ();
 		chessBoard[to.X][to.Y] = TSharedPtr<Null> ( new Null () );
-		Swap<TSharedPtr<Pawn>>(chessBoard[from.X][from.Y],chessBoard[to.X][to.Y]);
+		Swap<TSharedPtr<Pawn>> ( chessBoard[from.X][from.Y], chessBoard[to.X][to.Y] );
 	}
 	else {
 		if ( ( (Null*) chessBoard[to.X][to.Y].Get () )->isFirewallOn () ) {
@@ -275,7 +276,7 @@ bool ChessBoard::Move ( Place from, Place to ) {
 bool ChessBoard::MoveToServer ( Place from ) {
 	if ( !chessBoard[from.X][from.Y]->isMoveable () )
 		return false;
-	if ( !chessBoard[from.X][from.Y]->getPlayer ()->getEnemy ()->addToServer ( ( (Moveable*) ( chessBoard[from.X][from.Y].Get () ) )->isShowingOff(), ( (Moveable*) ( chessBoard[from.X][from.Y].Get () ) )->isLineBoosting (), chessBoard[from.X][from.Y]->getType () ) )return false;
+	if ( !chessBoard[from.X][from.Y]->getPlayer ()->getEnemy ()->addToServer ( ( (Moveable*) ( chessBoard[from.X][from.Y].Get () ) )->isShowingOff (), ( (Moveable*) ( chessBoard[from.X][from.Y].Get () ) )->isLineBoosting (), chessBoard[from.X][from.Y]->getType () ) )return false;
 	chessBoard[from.X][from.Y].Reset ();
 	chessBoard[from.X][from.Y] = TSharedPtr<Null> ( new Null () );
 	return true;
@@ -326,7 +327,7 @@ Null::Null () {
 }
 
 void Null::setFirewall ( const  bool state ) {
-	_IsFireWallOn = true;
+	_IsFireWallOn = state;
 }
 
 bool Null::isFirewallOn () const {
@@ -334,6 +335,7 @@ bool Null::isFirewallOn () const {
 }
 
 TWeakObjectPtr<AGamePlayer> Null::getPlayer () const {
+	if ( _IsFireWallOn ) return FireWallPlayer;
 	return nullptr;
 }
 
@@ -386,18 +388,18 @@ FPawnType Null::toFPawnType () {
 }
 FPawnType Virus::toFPawnType () {
 	FPawnType ret;
-	if ( _player->_playerID == 0 ) 
-		if ( _IsLineBoosting ) 
+	if ( _player->_playerID == 0 )
+		if ( _IsLineBoosting )
 			ret._Type = ShowType::VirusYL;
 		else
 			ret._Type = ShowType::VirusY;
 	else
-		if ( _IsShowingOff ) 
+		if ( _IsShowingOff )
 			if ( _IsLineBoosting )
 				ret._Type = ShowType::VirusBL;
 			else
 				ret._Type = ShowType::VirusB;
-		else 
+		else
 			if ( _IsLineBoosting )
 				ret._Type = ShowType::BackBL;
 			else
@@ -437,4 +439,68 @@ void ChessBoard::clearMovePoint () {
 			chessBoard[i][j]->setMovePoint ( false );
 		}
 	}
+}
+
+void ChessBoard::ShowMoveablePoint_Card ( int32 PlayerID, TerminalCard card ) {
+	TWeakObjectPtr<AGamePlayer> player = PlayerID == 0 ? _Me : _Enemy;
+	switch ( card ) {
+	case TerminalCard::LineBoost:
+		if ( player->_terminal[(int32) TerminalCard::LineBoost] == TERMINALCARD_USED ) {
+			for ( int i = 0; i < 8; i++ ) {
+				for ( int j = 0; j < 8; j++ ) {
+					if ( ( (Moveable*) chessBoard[i][j].Get () )->isLineBoosting () && chessBoard[i][j]->getPlayer()->_playerID == PlayerID){
+						chessBoard[i][j]->setMovePoint ( true );
+						return;
+					}
+				}
+			}
+		}
+		else {
+			for ( int i = 0; i < 8; i++ ) {
+				for ( int j = 0; j < 8; j++ ) {
+					if ( chessBoard[i][j]->isMoveable () && chessBoard[i][j]->getPlayer ()->_playerID == PlayerID ) {
+						chessBoard[i][j]->setMovePoint ( true );
+					}
+				}
+			}
+		}
+		break;
+	case TerminalCard::Firewall:
+		if ( player->_terminal[(int32) TerminalCard::Firewall] == TERMINALCARD_USED ) {
+			for ( int i = 0; i < 8; i++ ) {
+				for ( int j = 0; j < 8; j++ ) {
+					if(!chessBoard[i][j]->isMoveable() )
+						if ( ( (Null*) chessBoard[i][j].Get () )->isFirewallOn())
+							if(chessBoard[i][j]->getPlayer ()->_playerID == PlayerID ) {
+								chessBoard[i][j]->setMovePoint ( true );
+								return;
+							}
+				}
+			}
+		}
+		else {
+			for ( int i = 0; i < 8; i++ ) {
+				for ( int j = 1; j < 7; j++ ) {
+					if ( ( j == 1 || j == 6 ) && ( i == 3 || i == 4 ) )continue;
+					if ( !chessBoard[i][j]->isMoveable() && !((Null*)chessBoard[i][j].Get())->isFirewallOn()) {
+						chessBoard[i][j]->setMovePoint ( true );
+					}
+				}
+			}
+		}
+		break;
+	case TerminalCard::VirusCheck:
+		break;
+	case TerminalCard::NotFound:
+		break;
+	default:
+		break;
+	}
+
+}
+bool Null::setFireWallPlayer ( TWeakObjectPtr<AGamePlayer> player) {
+	if ( !_IsFireWallOn )
+		return false;
+	FireWallPlayer = player;
+	return true;
 }

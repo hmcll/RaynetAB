@@ -43,7 +43,7 @@ public:
 		bool ShowMovePointToServer ();
 
 	UFUNCTION ( BlueprintCallable, Category = "Functions" )
-		void ShowMoveablePoint_Card ( TEnumAsByte<TerminalCard> card );
+		void ShowMoveablePoint_Card ( int32 PlayerID, TEnumAsByte<TerminalCard> card );
 
 	UFUNCTION ( BlueprintCallable, Category = "Functions" )
 		void ClearMovePoint ();
