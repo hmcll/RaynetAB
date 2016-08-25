@@ -20,15 +20,10 @@ enum class WinState: uint8 {
 UENUM ( BlueprintType )
 enum class ShowType:uint8 {
 	BackB,
-	BackBL,
 	LinkB,
-	LinkBL,
 	LinkY,
-	LinkYL,
 	VirusB,
-	VirusBL,
 	VirusY,
-	VirusYL,
 	FireWall,
 	Null,
 };
@@ -47,10 +42,12 @@ USTRUCT ( BlueprintType )
 struct FPawnType {
 	GENERATED_BODY ()
 
-		UPROPERTY (  BlueprintReadWrite, Category = "PawnType" )
+	UPROPERTY (  BlueprintReadWrite, Category = "PawnType" )
 		bool _IsShowingOff = false;
 	UPROPERTY (  BlueprintReadWrite, Category = "PawnType" )
 		bool _IsMovePoint = false;
+	UPROPERTY ( BlueprintReadWrite, Category = "PawnType" )
+		bool _IsLineBoosting = false;
 //	UPROPERTY (  BlueprintReadWrite, Category = "PawnType" )
 //		bool _IsSelected = false;
 	UPROPERTY (  BlueprintReadWrite, Category = "PawnType" )
@@ -74,17 +71,17 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
-	UPROPERTY ( BlueprintReadWrite, EditAnywhere )
+	UPROPERTY ( BlueprintReadOnly )
 		int32 _server_V = 0;
-	UPROPERTY ( BlueprintReadWrite, EditAnywhere )
+	UPROPERTY ( BlueprintReadOnly )
 		int32 _server_L = 0;
-	UPROPERTY ( BlueprintReadWrite, EditAnywhere )
+	UPROPERTY ( BlueprintReadOnly )
 		int32 _dataBase_V = 0;
-	UPROPERTY ( BlueprintReadWrite, EditAnywhere )
+	UPROPERTY ( BlueprintReadOnly )
 		int32 _dataBase_L = 0;
-	UPROPERTY ( BlueprintReadWrite, EditAnywhere )
+	UPROPERTY ( BlueprintReadOnly )
 		TArray<bool>_terminal;
-	UPROPERTY ( BlueprintReadWrite, EditAnywhere )
+	UPROPERTY ( BlueprintReadOnly )
 		TEnumAsByte<ServerShowingOff> Showingoff = ServerShowingOff::Null;
 
 

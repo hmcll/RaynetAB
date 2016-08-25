@@ -259,7 +259,7 @@ bool ChessBoard::Move ( Place from, Place to ) {
 			return false;
 		if ( chessBoard[from.X][from.Y]->getPlayer ()->_playerID == chessBoard[to.X][to.Y]->getPlayer ()->_playerID )
 			return false;
-		if ( !chessBoard[from.X][from.Y]->getPlayer ()->addToDataBase ( ( (Moveable*) ( chessBoard[to.X][to.Y].Get () ) )->isLineBoosting (), chessBoard[to.X][to.Y]->getType () ) )return false;
+		if ( !chessBoard[from.X][from.Y]->getPlayer ()->addToDataBase (chessBoard[to.X][to.Y]->toFPawnType ()._IsLineBoosting, chessBoard[to.X][to.Y]->getType () ) )return false;
 		chessBoard[to.X][to.Y].Reset ();
 		chessBoard[to.X][to.Y] = TSharedPtr<Null> ( new Null () );
 		Swap<TSharedPtr<Pawn>> ( chessBoard[from.X][from.Y], chessBoard[to.X][to.Y] );
@@ -276,7 +276,7 @@ bool ChessBoard::Move ( Place from, Place to ) {
 bool ChessBoard::MoveToServer ( Place from ) {
 	if ( !chessBoard[from.X][from.Y]->isMoveable () )
 		return false;
-	if ( !chessBoard[from.X][from.Y]->getPlayer ()->getEnemy ()->addToServer ( ( (Moveable*) ( chessBoard[from.X][from.Y].Get () ) )->isShowingOff (), ( (Moveable*) ( chessBoard[from.X][from.Y].Get () ) )->isLineBoosting (), chessBoard[from.X][from.Y]->getType () ) )return false;
+	if ( !chessBoard[from.X][from.Y]->getPlayer ()->getEnemy ()->addToServer ( ( (Moveable*) ( chessBoard[from.X][from.Y].Get () ) )->isShowingOff (), chessBoard[from.X][from.Y]->toFPawnType ()._IsLineBoosting, chessBoard[from.X][from.Y]->getType () ) )return false;
 	chessBoard[from.X][from.Y].Reset ();
 	chessBoard[from.X][from.Y] = TSharedPtr<Null> ( new Null () );
 	return true;
@@ -389,46 +389,30 @@ FPawnType Null::toFPawnType () {
 FPawnType Virus::toFPawnType () {
 	FPawnType ret;
 	if ( _player->_playerID == 0 )
-		if ( _IsLineBoosting )
-			ret._Type = ShowType::VirusYL;
-		else
 			ret._Type = ShowType::VirusY;
 	else
 		if ( _IsShowingOff )
-			if ( _IsLineBoosting )
-				ret._Type = ShowType::VirusBL;
-			else
 				ret._Type = ShowType::VirusB;
 		else
-			if ( _IsLineBoosting )
-				ret._Type = ShowType::BackBL;
-			else
 				ret._Type = ShowType::BackB;
 	ret._IsMovePoint = _IsMovePoint;
 	ret._IsShowingOff = _IsShowingOff;
+	ret._IsLineBoosting = _IsLineBoosting;
 	return ret;
 }
 
 FPawnType Link::toFPawnType () {
 	FPawnType ret;
 	if ( _player->_playerID == 0 )
-		if ( _IsLineBoosting )
-			ret._Type = ShowType::LinkYL;
-		else
 			ret._Type = ShowType::LinkY;
 	else
 		if ( _IsShowingOff )
-			if ( _IsLineBoosting )
-				ret._Type = ShowType::LinkBL;
-			else
 				ret._Type = ShowType::LinkB;
 		else
-			if ( _IsLineBoosting )
-				ret._Type = ShowType::BackBL;
-			else
 				ret._Type = ShowType::BackB;
 	ret._IsMovePoint = _IsMovePoint;
 	ret._IsShowingOff = _IsShowingOff;
+	ret._IsLineBoosting = _IsLineBoosting;
 	return ret;
 }
 
@@ -482,7 +466,8 @@ void ChessBoard::ShowMoveablePoint_Card ( int32 PlayerID, TerminalCard card ) {
 			for ( int i = 0; i < 8; i++ ) {
 				for ( int j = 1; j < 7; j++ ) {
 					if ( ( j == 1 || j == 6 ) && ( i == 3 || i == 4 ) )continue;
-					if ( !chessBoard[i][j]->isMoveable() && !((Null*)chessBoard[i][j].Get())->isFirewallOn()) {
+					if ( !chessBoard[i][j]->isMoveable () )
+						if ( !( (Null*) chessBoard[i][j].Get () )->isFirewallOn () ){
 						chessBoard[i][j]->setMovePoint ( true );
 					}
 				}
@@ -490,6 +475,15 @@ void ChessBoard::ShowMoveablePoint_Card ( int32 PlayerID, TerminalCard card ) {
 		}
 		break;
 	case TerminalCard::VirusCheck:
+		if ( !player->_terminal[(int32) TerminalCard::VirusCheck] == TERMINALCARD_USED ) {
+			for ( int i = 0; i < 8; i++ ) {
+				for ( int j = 0; j < 8; j++ ) {
+					if ( chessBoard[i][j]->isMoveable () && chessBoard[i][j]->getPlayer ()->_playerID != PlayerID ) {
+						chessBoard[i][j]->setMovePoint ( true );
+					}
+				}
+			}
+		}
 		break;
 	case TerminalCard::NotFound:
 		break;
