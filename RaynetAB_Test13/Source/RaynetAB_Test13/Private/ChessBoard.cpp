@@ -134,7 +134,8 @@ bool ChessBoard::NotFoundSwap ( TWeakObjectPtr<AGamePlayer> player, Place from, 
 	}
 	Mofrom->setShowingOff ( false );
 	Moto->setShowingOff ( false );
-	//Swap<TSharedPtr<Pawn>> ( chessBoard[from.X][from.Y], chessBoard[to.X][to.Y] );
+	Swap<TSharedPtr<Pawn>> ( chessBoard[from.X][from.Y], chessBoard[to.X][to.Y] );
+	player->_terminal[(int32) TerminalCard::NotFound] = TERMINALCARD_USED;
 	return true;
 }
 bool ChessBoard::NotFoundNoSwap ( TWeakObjectPtr<AGamePlayer> player, Place from, Place to ) {
@@ -148,7 +149,8 @@ bool ChessBoard::NotFoundNoSwap ( TWeakObjectPtr<AGamePlayer> player, Place from
 		return false;
 	( (Moveable*) chessBoard[from.X][from.Y].Get () )->setShowingOff ( false );
 	( (Moveable*) chessBoard[to.X][to.Y].Get () )->setShowingOff ( false );
-	return false;
+	player->_terminal[(int32) TerminalCard::NotFound] = TERMINALCARD_USED;
+	return true;
 }
 // Not Including the entering server part.
 bool ChessBoard::ShowMoveablePoint ( Place pawn ) {
@@ -486,6 +488,15 @@ void ChessBoard::ShowMoveablePoint_Card ( int32 PlayerID, TerminalCard card ) {
 		}
 		break;
 	case TerminalCard::NotFound:
+		if ( !player->_terminal[(int32) TerminalCard::VirusCheck] == TERMINALCARD_USED ) {
+			for ( int i = 0; i < 8; i++ ) {
+				for ( int j = 0; j < 8; j++ ) {
+					if ( chessBoard[i][j]->isMoveable () && chessBoard[i][j]->getPlayer ()->_playerID == PlayerID ) {
+						chessBoard[i][j]->setMovePoint ( true );
+					}
+				}
+			}
+		}
 		break;
 	default:
 		break;
