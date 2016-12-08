@@ -17,7 +17,9 @@ public:
 
 	void BeginPlay () override;
 
-	
+
 	UFUNCTION ( BlueprintImplementableEvent )
 		void AfterBeginPlay ();
+
+	
 };
