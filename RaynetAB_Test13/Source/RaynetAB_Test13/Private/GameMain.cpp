@@ -14,11 +14,11 @@ void UGameMain::init () {
 	chessBoard = TSharedPtr<ChessBoard> ( new ChessBoard ( Me, Enemy ) );
 }
 
-bool UGameMain::Confirm ( TArray<TEnumAsByte<ShowType>> Setting ) {
+bool UGameMain::Confirm ( TArray<ShowType> Setting ) {
 	if ( Setting.Num () != 8 ) return false;
 	TArray<ShowType> Converted_Setting;
 	for ( int i = 0; i < 8; i++ ) {
-		Converted_Setting.Add( Setting[i].GetValue ());
+		Converted_Setting.Add( Setting[i]);
 	}
 	if(!chessBoard->SetPawn_Y ( Converted_Setting ))return false;
 	//init of Pawn_B needed

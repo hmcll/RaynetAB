@@ -2,15 +2,16 @@
 	"TargetName" : "RaynetAB_Test13Editor",
 	"Platform" : "Win64",
 	"Configuration" : "Development",
-	"BuildId" : "b870ad76-c435-4357-8af1-9d6f78afa78f",
+	"BuildId" : "4ed08ab1-818b-4d99-adb8-d8f9dfea3743",
 	"Version" : 
 	{
 		"MajorVersion" : 4,
-		"MinorVersion" : 12,
-		"PatchVersion" : 5,
-		"Changelist" : 3039270,
+		"MinorVersion" : 14,
+		"PatchVersion" : 1,
+		"Changelist" : 3224400,
+		"CompatibleChangelist" : 3195953,
 		"IsLicenseeVersion" : 0,
-		"BranchName" : "++UE4+Release-4.12"
+		"BranchName" : "++UE4+Release-4.14"
 	},
 	"BuildProducts" :
 	[
@@ -62,7 +63,15 @@
 			"Type" : "UFS"
 		},
 		{
+			"Path" : "$(EngineDir)/Plugins/Editor/AudioCapture/AudioCapture.uplugin",
+			"Type" : "UFS"
+		},
+		{
 			"Path" : "$(EngineDir)/Plugins/Editor/EpicSurvey/EpicSurvey.uplugin",
+			"Type" : "UFS"
+		},
+		{
+			"Path" : "$(EngineDir)/Plugins/Editor/MobileLauncherProfileWizard/MobileLauncherProfileWizard.uplugin",
 			"Type" : "UFS"
 		},
 		{
@@ -78,6 +87,10 @@
 			"Type" : "UFS"
 		},
 		{
+			"Path" : "$(EngineDir)/Plugins/Experimental/AlembicImporter/AlembicImporter.uplugin",
+			"Type" : "UFS"
+		},
+		{
 			"Path" : "$(EngineDir)/Plugins/Experimental/CharacterAI/CharacterAI.uplugin",
 			"Type" : "UFS"
 		},
@@ -86,11 +99,23 @@
 			"Type" : "UFS"
 		},
 		{
+			"Path" : "$(EngineDir)/Plugins/Media/AndroidMedia/AndroidMedia.uplugin",
+			"Type" : "UFS"
+		},
+		{
+			"Path" : "$(EngineDir)/Plugins/Media/AvfMedia/AvfMedia.uplugin",
+			"Type" : "UFS"
+		},
+		{
 			"Path" : "$(EngineDir)/Plugins/Media/MediaPlayerEditor/MediaPlayerEditor.uplugin",
 			"Type" : "UFS"
 		},
 		{
 			"Path" : "$(EngineDir)/Plugins/Media/WmfMedia/WmfMedia.uplugin",
+			"Type" : "UFS"
+		},
+		{
+			"Path" : "$(EngineDir)/Plugins/Messaging/TcpMessaging/TcpMessaging.uplugin",
 			"Type" : "UFS"
 		},
 		{
@@ -103,6 +128,18 @@
 		},
 		{
 			"Path" : "$(EngineDir)/Plugins/MovieScene/MatineeToLevelSequence/MatineeToLevelSequence.uplugin",
+			"Type" : "UFS"
+		},
+		{
+			"Path" : "$(EngineDir)/Plugins/Online/OnlineSubsystem/OnlineSubsystem.uplugin",
+			"Type" : "UFS"
+		},
+		{
+			"Path" : "$(EngineDir)/Plugins/Online/OnlineSubsystemNull/OnlineSubsystemNull.uplugin",
+			"Type" : "UFS"
+		},
+		{
+			"Path" : "$(EngineDir)/Plugins/Online/OnlineSubsystemUtils/OnlineSubsystemUtils.uplugin",
 			"Type" : "UFS"
 		},
 		{
@@ -119,6 +156,10 @@
 		},
 		{
 			"Path" : "$(EngineDir)/Plugins/Runtime/ExampleDeviceProfileSelector/ExampleDeviceProfileSelector.uplugin",
+			"Type" : "UFS"
+		},
+		{
+			"Path" : "$(EngineDir)/Plugins/Runtime/MobilePatchingUtils/MobilePatchingUtils.uplugin",
 			"Type" : "UFS"
 		},
 		{
@@ -154,7 +195,15 @@
 			"Type" : "UFS"
 		},
 		{
+			"Path" : "$(EngineDir)/Content/SlateDebug/...",
+			"Type" : "UFS"
+		},
+		{
 			"Path" : "$(ProjectDir)/Content/Slate/...",
+			"Type" : "UFS"
+		},
+		{
+			"Path" : "$(EngineDir)/Content/SlateDebug/...",
 			"Type" : "UFS"
 		}
 	]
