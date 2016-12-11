@@ -14,15 +14,11 @@ void UGameMain::init () {
 	chessBoard = TSharedPtr<ChessBoard> ( new ChessBoard ( Me, Enemy ) );
 }
 
-bool UGameMain::Confirm ( TArray<ShowType> Setting ) {
-	if ( Setting.Num () != 8 ) return false;
-	TArray<ShowType> Converted_Setting;
-	for ( int i = 0; i < 8; i++ ) {
-		Converted_Setting.Add( Setting[i]);
-	}
-	if(!chessBoard->SetPawn_Y ( Converted_Setting ))return false;
-	//init of Pawn_B needed
-	if (!chessBoard->SetPawn_B ( Converted_Setting ) )return false;
+bool UGameMain::Confirm ( TArray<ShowType> Setting_M, TArray<ShowType> Setting_E ) {
+	if ( Setting_M.Num ()+Setting_E.Num () != 16 ) return false;
+
+	if ( !chessBoard->SetPawn_Y ( Setting_M ) )return false;
+	if ( !chessBoard->SetPawn_B ( Setting_E ) )return false;
 	return true;
 }
 
@@ -32,14 +28,14 @@ TArray<FPawnType>  UGameMain::Refresh () {
 
 void UGameMain::ShowMoveablePoint ( FVector2D from ) {
 	chessBoard->clearMovePoint ();
-	chessBoard->ShowMoveablePoint (from);
+	chessBoard->ShowMoveablePoint ( from );
 }
 
 bool UGameMain::ShowMovePointToServer () {
 	return chessBoard->getMovePointServer ();
 }
 
-void UGameMain::ShowMoveablePoint_Card (int32 PlayerID, TEnumAsByte<TerminalCard> card ) {
+void UGameMain::ShowMoveablePoint_Card ( int32 PlayerID, TEnumAsByte<TerminalCard> card ) {
 	chessBoard->clearMovePoint ();
 	chessBoard->ShowMoveablePoint_Card ( PlayerID, card );
 }
@@ -48,24 +44,24 @@ void UGameMain::ClearMovePoint () {
 	chessBoard->clearMovePoint ();
 }
 
-bool UGameMain::LineBoost_BP (int32 playerID , FVector2D place ) {
+bool UGameMain::LineBoost_BP ( int32 playerID, FVector2D place ) {
 	return chessBoard->LineBoost ( playerID == 0 ? Me : Enemy, place );
 }
 
-bool UGameMain::FireWall_BP ( int32 playerID , FVector2D place ) {
-	return chessBoard->FireWall( playerID == 0 ? Me : Enemy,place);
+bool UGameMain::FireWall_BP ( int32 playerID, FVector2D place ) {
+	return chessBoard->FireWall ( playerID == 0 ? Me : Enemy, place );
 }
 
-bool UGameMain::VirusCheck_BP ( int32 playerID , FVector2D place ) {
-	return chessBoard->VirusCheck( playerID == 0 ? Me : Enemy,place);
+bool UGameMain::VirusCheck_BP ( int32 playerID, FVector2D place ) {
+	return chessBoard->VirusCheck ( playerID == 0 ? Me : Enemy, place );
 }
 
 bool UGameMain::NotFoundSwap_BP ( int32 playerID, FVector2D from, FVector2D to ) {
 	return chessBoard->NotFoundSwap ( playerID == 0 ? Me : Enemy, from, to );
 }
 
-bool UGameMain::NotFoundNoSwap_BP ( int32 playerID , FVector2D from, FVector2D to ) {
-	return chessBoard->NotFoundNoSwap( playerID == 0 ? Me : Enemy, from, to );
+bool UGameMain::NotFoundNoSwap_BP ( int32 playerID, FVector2D from, FVector2D to ) {
+	return chessBoard->NotFoundNoSwap ( playerID == 0 ? Me : Enemy, from, to );
 }
 
 bool  UGameMain::Move ( FVector2D from, FVector2D to ) {
@@ -73,5 +69,5 @@ bool  UGameMain::Move ( FVector2D from, FVector2D to ) {
 }
 
 bool  UGameMain::MoveToServer ( FVector2D from ) {
-	return chessBoard->MoveToServer ( from);
+	return chessBoard->MoveToServer ( from );
 }
