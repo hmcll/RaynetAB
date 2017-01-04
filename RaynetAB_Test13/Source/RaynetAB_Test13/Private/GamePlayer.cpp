@@ -52,13 +52,13 @@ bool AGamePlayer::Win () {
 
 bool AGamePlayer::addToServer (bool isShowingOff, bool islineboosting, const ShowType Type ) {
 	switch ( Type ) {
-	case ShowType::LinkB:
-	case ShowType::LinkY:
+	case ShowType::LinkE:
+	case ShowType::LinkM:
 		_server_L++;
 		Showingoff = isShowingOff ? ServerShowingOff::Link : ServerShowingOff::Null;
 		break;
-	case ShowType::VirusB:
-	case ShowType::VirusY:
+	case ShowType::VirusE:
+	case ShowType::VirusM:
 		_server_V++;
 		Showingoff = isShowingOff ? ServerShowingOff::Virus : ServerShowingOff::Null;
 		break;
@@ -72,12 +72,12 @@ bool AGamePlayer::addToServer (bool isShowingOff, bool islineboosting, const Sho
 
 bool AGamePlayer::addToDataBase (bool islineboosting, ShowType Type ) {
 	switch ( Type ) {
-	case ShowType::LinkB:
-	case ShowType::LinkY:
+	case ShowType::LinkE:
+	case ShowType::LinkM:
 		_dataBase_L++;
 		break;
-	case ShowType::VirusB:
-	case ShowType::VirusY:
+	case ShowType::VirusE:
+	case ShowType::VirusM:
 		_dataBase_V++;
 		break;
 	default:

@@ -16,18 +16,18 @@ ChessBoard::ChessBoard ( TWeakObjectPtr<AGamePlayer> Me, TWeakObjectPtr<AGamePla
 	}
 }
 /*
-To initalize Yellow Pawns (MyPawn)
+To initalize MyPawn
 @Param
 @Pattern Right to Left 1 = Virus 0 = Link
 */
-bool ChessBoard::SetPawn_Y ( TArray<ShowType> Setting ) {
+bool ChessBoard::SetPawn_M ( TArray<ShowType> Setting ) {
 	TArray<int32> Y;
 	Y.Init ( 0, 8 );
 	Y[3] = 1;
 	Y[4] = 1;
 	for ( int i = 0; i < 8; i++ ) {
 
-		if ( Setting[i] == ShowType::VirusY )
+		if ( Setting[i] == ShowType::VirusM )
 			chessBoard[i][Y[i]] = TSharedPtr<Virus> ( new Virus ( _Me ) );
 		else
 			chessBoard[i][Y[i]] = TSharedPtr<Link> ( new Link ( _Me ) );
@@ -36,20 +36,20 @@ bool ChessBoard::SetPawn_Y ( TArray<ShowType> Setting ) {
 }
 
 /*
-To initalize Blue Pawns (EnemyPawn)
+To initalize EnemyPawn
 @Param
 @Pattern Right to Left 1 = Virus 0 = Link
 */
-bool ChessBoard::SetPawn_B ( TArray<ShowType> Setting ) {
+bool ChessBoard::SetPawn_E ( TArray<ShowType> Setting ) {
 	TArray<int32> Y;
 	Y.Init ( 7, 8 );
 	Y[3] = 6;
 	Y[4] = 6;
 	for ( int i = 0; i < 8; i++ ) {
-		if ( Setting[i] == ShowType::VirusY )
-			chessBoard[i][Y[i]] = TSharedPtr<Virus> ( new Virus ( _Enemy ) );
+		if ( Setting[i] == ShowType::VirusM )
+			chessBoard[7-i][Y[i]] = TSharedPtr<Virus> ( new Virus ( _Enemy ) );
 		else
-			chessBoard[i][Y[i]] = TSharedPtr<Link> ( new Link ( _Enemy ) );
+			chessBoard[7-i][Y[i]] = TSharedPtr<Link> ( new Link ( _Enemy ) );
 	}
 	return true;
 }
@@ -101,7 +101,7 @@ bool ChessBoard::FireWall ( TWeakObjectPtr<AGamePlayer> player, Place place ) {
 		}
 		player->setTerminalUse ( TerminalCard::Firewall, TERMINALCARD_USED );
 		NullPlace->setFirewall ( true );
-		NullPlace->setFireWallPlayer ( player );
+		NullPlace->setFireWallPlayer ( player , player->_playerID == _Me->_playerID);
 	}
 	return true;
 }
@@ -297,7 +297,7 @@ TArray<FPawnType> ChessBoard::Refresh () {
 Link::Link ( TWeakObjectPtr<AGamePlayer> player ) {
 	_player = player;
 
-	_type = player->_playerID == 0 ? ShowType::LinkY : ShowType::LinkB;
+	_type = player->_playerID == 0 ? ShowType::LinkM : ShowType::LinkE;
 }
 
 Link::~Link () {
@@ -346,7 +346,7 @@ Null::~Null () {
 
 Virus::Virus ( TWeakObjectPtr<AGamePlayer>  player ) {
 	_player = player;
-	_type = player->_playerID == 0 ? ShowType::VirusY : ShowType::VirusB;
+	_type = player->_playerID == 0 ? ShowType::VirusM : ShowType::VirusE;
 }
 
 Virus::~Virus () {
@@ -385,18 +385,18 @@ bool Null::isMoveable () const {
 FPawnType Null::toFPawnType () {
 	FPawnType ret;
 	ret._IsMovePoint = _IsMovePoint;
-	ret._Type = _IsFireWallOn ? ShowType::FireWall : ShowType::Null;
+	ret._Type = _IsFireWallOn ? _IsMine ? ShowType::FireWallM: ShowType::FireWallE : ShowType::Null;
 	return ret;
 }
 FPawnType Virus::toFPawnType () {
 	FPawnType ret;
 	if ( _player->_playerID == 0 )
-			ret._Type = ShowType::VirusY;
+			ret._Type = ShowType::VirusM;
 	else
 		if ( _IsShowingOff )
-				ret._Type = ShowType::VirusB;
+				ret._Type = ShowType::VirusE;
 		else
-				ret._Type = ShowType::BackB;
+				ret._Type = ShowType::BackE;
 	ret._IsMovePoint = _IsMovePoint;
 	ret._IsShowingOff = _IsShowingOff;
 	ret._IsLineBoosting = _IsLineBoosting;
@@ -406,12 +406,12 @@ FPawnType Virus::toFPawnType () {
 FPawnType Link::toFPawnType () {
 	FPawnType ret;
 	if ( _player->_playerID == 0 )
-			ret._Type = ShowType::LinkY;
+			ret._Type = ShowType::LinkM;
 	else
 		if ( _IsShowingOff )
-				ret._Type = ShowType::LinkB;
+				ret._Type = ShowType::LinkE;
 		else
-				ret._Type = ShowType::BackB;
+				ret._Type = ShowType::BackE;
 	ret._IsMovePoint = _IsMovePoint;
 	ret._IsShowingOff = _IsShowingOff;
 	ret._IsLineBoosting = _IsLineBoosting;
@@ -503,9 +503,10 @@ void ChessBoard::ShowMoveablePoint_Card ( int32 PlayerID, TerminalCard card ) {
 	}
 
 }
-bool Null::setFireWallPlayer ( TWeakObjectPtr<AGamePlayer> player) {
+bool Null::setFireWallPlayer ( TWeakObjectPtr<AGamePlayer> player, bool Me) {
 	if ( !_IsFireWallOn )
 		return false;
 	FireWallPlayer = player;
+	_IsMine = Me;
 	return true;
 }

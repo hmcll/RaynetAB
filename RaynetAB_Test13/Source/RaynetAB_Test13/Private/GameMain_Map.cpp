@@ -6,6 +6,5 @@
 
 
 void AGameMain_Map::BeginPlay () {
-	GSystemResolution.RequestResolutionChange ( 540, 960 , EWindowMode::Windowed);
 	AfterBeginPlay ();
 }

@@ -17,8 +17,8 @@ void UGameMain::init () {
 bool UGameMain::Confirm ( TArray<ShowType> Setting_M, TArray<ShowType> Setting_E ) {
 	if ( Setting_M.Num ()+Setting_E.Num () != 16 ) return false;
 
-	if ( !chessBoard->SetPawn_Y ( Setting_M ) )return false;
-	if ( !chessBoard->SetPawn_B ( Setting_E ) )return false;
+	if ( !chessBoard->SetPawn_M ( Setting_M ) )return false;
+	if ( !chessBoard->SetPawn_E ( Setting_E ) )return false;
 	return true;
 }
 
