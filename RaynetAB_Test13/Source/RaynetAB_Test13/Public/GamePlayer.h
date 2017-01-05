@@ -19,12 +19,13 @@ enum class WinState: uint8 {
 
 UENUM ( BlueprintType )
 enum class ShowType:uint8 {
-	BackB,
-	LinkB,
-	LinkY,
-	VirusB,
-	VirusY,
-	FireWall,
+	BackE,
+	LinkE,
+	LinkM,
+	VirusE,
+	VirusM,
+	FireWallE,
+	FireWallM,
 	Null,
 };
 

@@ -31,7 +31,7 @@ public:
 		void init ();
 
 	UFUNCTION ( BlueprintCallable, Category = "Functions" )
-		bool Confirm ( TArray<ShowType> Setting);
+		bool Confirm ( TArray<ShowType> Setting_M, TArray<ShowType> Setting_E );
 
 	UFUNCTION ( BlueprintCallable, Category = "Functions" )
 		TArray<FPawnType> Refresh ();

@@ -89,6 +89,7 @@ Empty Place or Firewall
 class Null: public Pawn {
 private:
 	bool _IsFireWallOn = false;
+	bool _IsMine = false;
 	TWeakObjectPtr<AGamePlayer> FireWallPlayer;
 public:
 	FPawnType toFPawnType () override;
@@ -96,7 +97,7 @@ public:
 	void setFirewall ( const bool state );
 	bool isFirewallOn () const;	
 	TWeakObjectPtr<AGamePlayer> getPlayer () const override;
-	bool setFireWallPlayer ( TWeakObjectPtr<AGamePlayer> player);
+	bool setFireWallPlayer ( TWeakObjectPtr<AGamePlayer> player, bool Me);
 	bool isMoveable () const override;
 	~Null () override;
 };
@@ -111,8 +112,8 @@ class ChessBoard {
 	bool MovePointServer = false;
 public:
 	ChessBoard ( TWeakObjectPtr<AGamePlayer> Me, TWeakObjectPtr<AGamePlayer> Enemy);
-	bool SetPawn_Y ( TArray<ShowType> Setting );
-	bool SetPawn_B ( TArray<ShowType> Setting );
+	bool SetPawn_M ( TArray<ShowType> Setting );
+	bool SetPawn_E ( TArray<ShowType> Setting );
 	bool getMovePointServer ();
 	void clearMovePoint ();
 	bool LineBoost ( TWeakObjectPtr<AGamePlayer> player, Place place );
