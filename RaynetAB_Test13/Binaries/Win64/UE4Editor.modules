@@ -1,9 +1,9 @@
 {
 	"Changelist" : 3224400,
 	"CompatibleChangelist" : 3195953,
-	"BuildId" : "8f7ad536-cd8a-429e-b151-76b542476b11",
+	"BuildId" : "c5f83d61-c472-49ed-84b8-05fdd058b604",
 	"Modules" : 
 	{
-		"RaynetAB_Test13" : "UE4Editor-RaynetAB_Test13-81.dll"
+		"RaynetAB_Test13" : "UE4Editor-RaynetAB_Test13.dll"
 	}
 }

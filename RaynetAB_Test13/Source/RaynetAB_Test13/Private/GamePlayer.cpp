@@ -55,12 +55,12 @@ bool AGamePlayer::addToServer (bool isShowingOff, bool islineboosting, const Sho
 	case ShowType::LinkE:
 	case ShowType::LinkM:
 		_server_L++;
-		Showingoff = isShowingOff ? ServerShowingOff::Link : ServerShowingOff::Null;
+		Showingoff = isShowingOff ? ServerShowingOff::Link : Showingoff;
 		break;
 	case ShowType::VirusE:
 	case ShowType::VirusM:
 		_server_V++;
-		Showingoff = isShowingOff ? ServerShowingOff::Virus : ServerShowingOff::Null;
+		Showingoff = isShowingOff ? ServerShowingOff::Virus : Showingoff;
 		break;
 	default:
 		return false;
@@ -84,7 +84,7 @@ bool AGamePlayer::addToDataBase (bool islineboosting, ShowType Type ) {
 		return false;
 		break;
 	}
-	if (islineboosting )setTerminalUse ( TerminalCard::LineBoost, TERMINALCARD_UNUSED );
+	if (islineboosting )getEnemy()->setTerminalUse ( TerminalCard::LineBoost, TERMINALCARD_UNUSED );
 	return true;
 }
 
