@@ -6,3 +6,10 @@
 RaynetAB_Test13/RaynetAB_Test13.VC.opendb
 RaynetAB_Test13/.vs/RaynetAB_Test13/v14/.suo
 *.pdb
+/RaynetAB_Test13 4.15/Saved/*
+/RaynetAB_Test13 4.15/Intermediate/*
+/RaynetAB_Test13 4.15/Binaries/*
+/RaynetAB_Test13 4.15/Build/*
+*.sdf
+RaynetAB_Test13 4.15/RaynetAB_Test13.VC.opendb
+RaynetAB_Test13 4.15/.vs/RaynetAB_Test13/v14/.suo
