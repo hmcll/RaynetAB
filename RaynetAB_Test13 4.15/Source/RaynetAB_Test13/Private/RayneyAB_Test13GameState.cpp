@@ -9,7 +9,16 @@ void ARayneyAB_Test13GameState::Server_SetPawn_Arrangement_Implementation ( bool
 }
 
 void ARayneyAB_Test13GameState::Server_Confirm_Implementation () {
+	if ( Flag_OnesideFinished ) {
 
+	}
+	else {
+		Flag_OnesideFinished = true;
+	}
+}
+
+ARayneyAB_Test13GameState::ARayneyAB_Test13GameState () {
+	bReplicates = true;
 }
 
 void ARayneyAB_Test13GameState::Server_Move_Implementation ( FMove_C move ) {
@@ -34,4 +43,9 @@ bool ARayneyAB_Test13GameState::Server_Move_Validate ( FMove_C move ) {
 
 bool ARayneyAB_Test13GameState::Server_Win_Validate ( bool EnemyWinState ) {
 	return true;
+}
+
+void ARayneyAB_Test13GameState::GetLifetimeReplicatedProps ( TArray< FLifetimeProperty > & OutLifetimeProps ) const{
+	Super::GetLifetimeReplicatedProps ( OutLifetimeProps );
+	DOREPLIFETIME ( ARayneyAB_Test13GameState, Flag_OnesideFinished );
 }
