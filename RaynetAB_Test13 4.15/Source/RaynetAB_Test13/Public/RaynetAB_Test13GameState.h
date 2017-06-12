@@ -21,6 +21,9 @@ public:
 		bool RefreshState = false;
 	
 	UPROPERTY(BlueprintReadWrite, Replicated, Category = "Variable")
+		bool EnemyFinishedState = false;
+
+	UPROPERTY(BlueprintReadWrite, Replicated, Category = "Variable")
 		bool Flag_HostWon = false;
 
 	UPROPERTY(BlueprintReadWrite, Replicated, Category = "Variable")
