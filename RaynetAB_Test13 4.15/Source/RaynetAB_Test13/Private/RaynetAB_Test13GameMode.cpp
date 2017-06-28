@@ -40,7 +40,6 @@ void ARaynetAB_Test13GameMode::CreateNewRoom_Implementation(int32 id) {
 
 void ARaynetAB_Test13GameMode::Server_Move_Implementation(FMove_C move) {
 	Cast<ARaynetAB_Test13GameState>(GameState)->MoveStack.Add(move);
-	Cast<ARaynetAB_Test13GameState>(GameState)->EnemyFinishedState = true;
 }
 
 void ARaynetAB_Test13GameMode::Server_Win_Implementation(bool HostWon) {

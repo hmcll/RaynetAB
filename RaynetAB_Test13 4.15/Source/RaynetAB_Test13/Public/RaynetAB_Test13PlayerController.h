@@ -21,9 +21,12 @@ public:
 	UPROPERTY(Replicated, BlueprintReadOnly)
 		ARaynetAB_Test13PlayerState* _PlayerState;
 
-	UFUNCTION(BlueprintCallable, Server, WithValidation, Reliable, Category = "Functions")
+	UFUNCTION(BlueprintCallable, Category = "Functions")
 		void Refresh();
-		
+
+	UFUNCTION(Server, WithValidation, Reliable)
+		void Refresh_SV();
+	
 	UFUNCTION(Server, WithValidation, Reliable)
 		void ShowMovePointToServer_SV();
 
@@ -32,9 +35,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Server, WithValidation, Reliable, Category = "Functions")
 		void GotUpdate();
-
-	UFUNCTION(BlueprintCallable, Server, WithValidation, Reliable, Category = "Functions")
-		void GotEnemyFinished();
 
 	UFUNCTION(BlueprintCallable, Server, WithValidation, Reliable, Category = "Functions")
 		void SetHostGoingFirst(bool HostGoingFirst);

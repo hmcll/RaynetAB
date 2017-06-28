@@ -9,19 +9,15 @@ bool ARaynetAB_Test13PlayerController::ShowMovePointToServer() {
 	return Cast<ARaynetAB_Test13GameState>(GetWorld()->GetGameState())->MovePointToServer;
 }
 
-void ARaynetAB_Test13PlayerController::GotEnemyFinished_Implementation() {
-	auto a = Cast<ARaynetAB_Test13GameState>(GetWorld()->GetGameState());
-	a->RefreshState = false;
-	ResetGotUpdate.Broadcast();
-}
 
-bool ARaynetAB_Test13PlayerController::GotEnemyFinished_Validate() {
-	return true;
+void ARaynetAB_Test13PlayerController::Refresh() {
+	Refresh_SV();
+	
 }
 
 void ARaynetAB_Test13PlayerController::GotUpdate_Implementation() {
 	auto a = Cast<ARaynetAB_Test13GameState>(GetWorld()->GetGameState());
-	a->EnemyFinishedState = false;
+	a->RefreshState = false;
 	ResetGotUpdate.Broadcast();
 }
 	
@@ -34,7 +30,7 @@ void ARaynetAB_Test13PlayerController::Confirm_Implementation(const TArray<ShowT
 	
 }
 
-void ARaynetAB_Test13PlayerController::Refresh_Implementation() {
+void ARaynetAB_Test13PlayerController::Refresh_SV_Implementation() {
 	
 	Cast<ARaynetAB_Test13GameMode>(GetWorld()->GetAuthGameMode())->Refresh(_PlayerState->roomNumber);
 }
@@ -105,7 +101,7 @@ void ARaynetAB_Test13PlayerController::SetHostGoingFirst_Implementation(bool Hos
 }
 
 
-bool ARaynetAB_Test13PlayerController::Refresh_Validate() {
+bool ARaynetAB_Test13PlayerController::Refresh_SV_Validate() {
 	return true;
 }
 
