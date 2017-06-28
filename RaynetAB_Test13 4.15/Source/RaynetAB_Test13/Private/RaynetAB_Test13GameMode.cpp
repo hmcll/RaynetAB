@@ -14,18 +14,15 @@ void ARaynetAB_Test13GameMode::PostLogin(APlayerController * NewPlayer) {
 			check(player2);
 			player1->roomNumber = id / 2;
 			player2->roomNumber = id / 2;
-			player1->id = id - 1;
-			player2->id = id;
-			player1->_enemy = player2;
-			player2->_enemy = player1;
+			player1->id = 1;
+			player2->id = 2;
 			player1->isHost = true;
 			player2->isHost = false;
 			Playerstack[0]->_PlayerState = player1;
 			Playerstack[1]->_PlayerState = player2;
 			CreateNewRoom(id / 2);
-			Rooms[id / 2]->player1 = id - 1;
-			Rooms[id / 2]->player2 = id;
 			Cast<ARaynetAB_Test13GameState>(GameState)->_GameState = EGameState::Starting;
+			
 			Cast<ARaynetAB_Test13PlayerController>(Playerstack[0])->AfterPostLogin();
 			Cast<ARaynetAB_Test13PlayerController>(Playerstack[1])->AfterPostLogin();
 		}
@@ -38,9 +35,9 @@ void ARaynetAB_Test13GameMode::CreateNewRoom_Implementation(int32 id) {
 	Rooms.Insert(NewObject<UChessBoard>(), id);
 }
 
-void ARaynetAB_Test13GameMode::Server_Move_Implementation(FMove_C move) {
+void ARaynetAB_Test13GameMode::Server_Move_Implementation(FMove_C move, RoundRefreshState RoundAfter) {
 	Cast<ARaynetAB_Test13GameState>(GameState)->MoveStack.Add(move);
-	Cast<ARaynetAB_Test13GameState>(GameState)->EnemyFinishedState = true;
+	Cast<ARaynetAB_Test13GameState>(GameState)->roundRefresh = RoundAfter;
 }
 
 void ARaynetAB_Test13GameMode::Server_Win_Implementation(bool HostWon) {
@@ -62,10 +59,19 @@ void ARaynetAB_Test13GameMode::Confirm_Implementation(int32 roomNumber, int32 pl
 	}
 }
 
-void ARaynetAB_Test13GameMode::Refresh_Implementation(int32 roomNumber) {
+void ARaynetAB_Test13GameMode::Refresh_Implementation(int32 playerid,int32 roomNumber) {
 	auto st = Cast<ARaynetAB_Test13GameState>(GameState);
-	Cast<ARaynetAB_Test13GameState>(GameState)->Refresh = Rooms[roomNumber]->Refresh();
+	Cast<ARaynetAB_Test13GameState>(GameState)->Refresh = Rooms[roomNumber]->Refresh(playerid);
 	Cast<ARaynetAB_Test13GameState>(GameState)->RefreshState = true;
+	if( playerid == 1 ) {
+		Cast<ARaynetAB_Test13GameState>(GameState)->RefreshPlayer = *Rooms[roomNumber]->player1;
+		Cast<ARaynetAB_Test13GameState>(GameState)->RefreshPlayer_Enemy = *Rooms[roomNumber]->player2;
+	}
+	else {
+
+		Cast<ARaynetAB_Test13GameState>(GameState)->RefreshPlayer = *Rooms[roomNumber]->player2;
+		Cast<ARaynetAB_Test13GameState>(GameState)->RefreshPlayer_Enemy = *Rooms[roomNumber]->player1;
+	}
 }
 
 void ARaynetAB_Test13GameMode::ShowMoveablePoint_Implementation(int32 roomNumber, FVector2D from) {
@@ -77,21 +83,21 @@ void ARaynetAB_Test13GameMode::ShowMovePointToServer_Implementation(int32 roomNu
 	Cast<ARaynetAB_Test13GameState>(GameState)->MovePointToServer = Rooms[roomNumber]->getMovePointServer();
 }
 
-void ARaynetAB_Test13GameMode::ShowMoveablePoint_Card_Implementation(int32 roomNumber, int32 playerID, TerminalCard card, const TArray<bool> & _terminal) {
+void ARaynetAB_Test13GameMode::ShowMoveablePoint_Card_Implementation(int32 roomNumber, int32 playerID, TerminalCard card) {
 	Rooms[roomNumber]->clearMovePoint();
-	Rooms[roomNumber]->ShowMoveablePoint_Card(playerID, card, _terminal);
+	Rooms[roomNumber]->ShowMoveablePoint_Card(playerID, card);
 }
 
 void ARaynetAB_Test13GameMode::ClearMovePoint_Implementation(int32 roomNumber) {
 	Rooms[roomNumber]->clearMovePoint();
 }
 
-void ARaynetAB_Test13GameMode::LineBoost_Implementation(int32 roomNumber, int32 playerID, FVector2D place, bool used) {
-	Rooms[roomNumber]->LineBoost(playerID, place, used);
+void ARaynetAB_Test13GameMode::LineBoost_Implementation(int32 roomNumber, FVector2D place) {
+	Rooms[roomNumber]->LineBoost( place);
 }
 
-void ARaynetAB_Test13GameMode::FireWall_Implementation(int32 roomNumber, int32 playerID, FVector2D place, bool used) {
-	Rooms[roomNumber]->FireWall(playerID, place, used);
+void ARaynetAB_Test13GameMode::FireWall_Implementation(int32 roomNumber, int32 playerID, FVector2D place) {
+	Rooms[roomNumber]->FireWall(playerID, place);
 }
 
 void ARaynetAB_Test13GameMode::VirusCheck_Implementation(int32 roomNumber, int32 playerID, FVector2D place) {
@@ -119,7 +125,7 @@ void ARaynetAB_Test13GameMode::changeState_Implementation(EGameState stateTo) {
 }
 
 
-bool ARaynetAB_Test13GameMode::Server_Move_Validate(FMove_C move) {
+bool ARaynetAB_Test13GameMode::Server_Move_Validate(FMove_C move, RoundRefreshState to) {
 	return true;
 }
 
@@ -135,7 +141,7 @@ bool ARaynetAB_Test13GameMode::Confirm_Validate(int32 roomNumber, int32 player, 
 	return true;
 }
 
-bool ARaynetAB_Test13GameMode::Refresh_Validate(int32 roomNumber) {
+bool ARaynetAB_Test13GameMode::Refresh_Validate(int32 playerid,int32 roomNumber) {
 	return true;
 }
 
@@ -147,7 +153,7 @@ bool ARaynetAB_Test13GameMode::ShowMoveablePoint_Validate(int32 roomNumber, FVec
 	return true;
 }
 
-bool ARaynetAB_Test13GameMode::ShowMoveablePoint_Card_Validate(int32 roomNumber, int32 playerID, TerminalCard card, const TArray<bool>& _terminal) {
+bool ARaynetAB_Test13GameMode::ShowMoveablePoint_Card_Validate(int32 roomNumber, int32 playerID, TerminalCard card) {
 	return true;
 }
 
@@ -155,11 +161,11 @@ bool ARaynetAB_Test13GameMode::ClearMovePoint_Validate(int32 roomNumber) {
 	return true;
 }
 
-bool ARaynetAB_Test13GameMode::LineBoost_Validate(int32 roomNumber, int32 playerID, FVector2D place, bool used) {
+bool ARaynetAB_Test13GameMode::LineBoost_Validate(int32 roomNumber, FVector2D place) {
 	return true;
 }
 
-bool ARaynetAB_Test13GameMode::FireWall_Validate(int32 roomNumber, int32 playerID, FVector2D place, bool used) {
+bool ARaynetAB_Test13GameMode::FireWall_Validate(int32 roomNumber, int32 playerID, FVector2D place) {
 	return true;
 }
 

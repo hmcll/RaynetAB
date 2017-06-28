@@ -9,39 +9,65 @@
  *
  */
 
-
-
-//first = x second = y
+ //first = x second = y
 typedef FVector2D Place;
 
 class Pawn;
 
 typedef TArray<TArray<TSharedPtr<Pawn>>> Board;
 
-UENUM ( BlueprintType )
+UENUM(BlueprintType)
 enum class State:uint8 {
 	OnLine, Server, DataBase
 };
+USTRUCT(BlueprintType)
+struct FChessboardPlayer {
+	GENERATED_BODY()
 
+		UPROPERTY(BlueprintReadWrite, Category = "Variable")
+		int32 _server_V = 0;
+	UPROPERTY(BlueprintReadWrite, Category = "Variable")
+		int32 _server_L = 0;
+	UPROPERTY(BlueprintReadWrite, Category = "Variable")
+		int32 _dataBase_V = 0;
+	UPROPERTY(BlueprintReadWrite, Category = "Variable")
+		int32 _dataBase_L = 0;
 
-/*
-A place on the Board
-*/
+	int32 playerid;
+	UPROPERTY(BlueprintReadWrite, Category = "Variable")
+		TArray<bool>_terminal;
+	
+	TSharedPtr<FChessboardPlayer> _enemy;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Variable")
+		ServerShowingOff Showingoff = ServerShowingOff::Null;
+
+	FChessboardPlayer();
+
+	bool addToServer(bool isShowingOff, bool islineboosting, ShowType Type);
+
+	bool addToDataBase(bool islineboosting, ShowType Type);
+
+	bool getTerminalUse(TerminalCard card);
+
+	void setTerminalUse(TerminalCard card, bool state);
+
+};
 
 class Pawn {
 protected:
-	int32 _player;
+	TSharedPtr<FChessboardPlayer> _player;
 	ShowType _type;
 	bool _IsMovePoint = false;
 public:
-	virtual FPawnType toFPawnType () = 0;
-	virtual ~Pawn ();
+	virtual FPawnType toFPawnType(int32 playerid) = 0;
+	virtual ~Pawn();
 	//is able to move
-	void setMovePoint ( const bool state );
-	bool isMovePoint () const;
-	virtual bool isMoveable () const = 0;
-	ShowType getType () const;
-	virtual	int32 getPlayer () const;
+	void setMovePoint(const bool state);
+	bool isMovePoint() const;
+	virtual bool isMoveable() const = 0;
+	ShowType getType() const;
+	virtual	TSharedPtr<FChessboardPlayer> getPlayer() const;
 };
 /*
 Common Features of Link and Virus
@@ -52,35 +78,27 @@ protected:
 	bool _IsShowingOff = false;
 	bool _IsSelected = false;
 public:
-	bool isMoveable () const override;
-	bool isLineBoosting () const;
-	void setLineBoost ( const bool state );
-	bool isShowingOff () const;
-	void setShowingOff ( const bool state );
-	bool isSelected () const;
-	void setSelected ( const bool state );
+	bool isMoveable() const override;
+	bool isLineBoosting() const;
+	void setLineBoost(const bool state);
+	bool isShowingOff() const;
+	void setShowingOff(const bool state);
+	bool isSelected() const;
+	void setSelected(const bool state);
 };
-
-/*
-Link card
-*/
 
 class Link: public Moveable {
 public:
-	FPawnType toFPawnType () override;
-	Link ( int32 player );
-	~Link () override;
+	FPawnType toFPawnType(int32 playerid) override;
+	Link(TSharedPtr<FChessboardPlayer> player);
+	~Link() override;
 };
-
-/*
-Virus card
-*/
 
 class Virus: public Moveable {
 public:
-	FPawnType toFPawnType () override;
-	Virus ( int32  player );
-	~Virus () override;
+	FPawnType toFPawnType(int32 playerid) override;
+	Virus(TSharedPtr<FChessboardPlayer>  player);
+	~Virus() override;
 };
 
 /*
@@ -91,44 +109,43 @@ class Null: public Pawn {
 private:
 	bool _IsFireWallOn = false;
 	bool _IsMine = false;
-	int32 FireWallPlayer;
+	TSharedPtr<FChessboardPlayer> FireWallPlayer;
 public:
-	FPawnType toFPawnType () override;
-	Null ();
-	void setFirewall ( const bool state );
-	bool isFirewallOn () const;	
-	int32 getPlayer () const override;
-	void setFireWallPlayer ( int32 player, bool Me);
-	bool isMoveable () const override;
-	~Null () override;
+	FPawnType toFPawnType(int32 playerid) override;
+	Null();
+	void setFirewall(const bool state);
+	bool isFirewallOn() const;
+	TSharedPtr<FChessboardPlayer> getPlayer() const override;
+	void setFireWallPlayer(TSharedPtr<FChessboardPlayer> FChessboardPlayer, bool Me);
+	bool isMoveable() const override;
+	~Null() override;
 };
 
 UCLASS()
-class RAYNETAB_TEST13_API UChessBoard :public UObject{
-	GENERATED_BODY ()
-	// left down cornor is 0,0 up right is 7,7
-	Board chessBoard;
+class RAYNETAB_TEST13_API UChessBoard:public UObject {
+	GENERATED_BODY()
+		// left down cornor is 0,0 up right is 7,7
+		Board chessBoard;
 
-	
 	bool MovePointServer = false;
 public:
 
-	int32 player1;
-	int32 player2;
+	TSharedPtr<FChessboardPlayer> player1;
+	TSharedPtr<FChessboardPlayer> player2;
 
 	UChessBoard();
-	void SetPawn_1 ( TArray<ShowType> Setting );
-	void SetPawn_2 ( TArray<ShowType> Setting );
-	bool getMovePointServer ();
-	void clearMovePoint ();
-	void LineBoost ( int32 player, Place place, bool used );
-	void FireWall ( int32 player, Place place, bool used );
-	void VirusCheck ( int32 player, Place place );
-	void NotFoundSwap ( int32 player, Place from, Place to );
-	void NotFoundNoSwap ( int32 player, Place from, Place to );
-	void ShowMoveablePoint ( Place pawn );
-	void ShowMoveablePoint_Card ( int32 PlayerID, TerminalCard card, TArray<bool> _terminal );
-	void Move ( Place from, Place to );
-	void MoveToServer ( Place from);
-	TArray<FPawnType> Refresh ();
+	void SetPawn_1(TArray<ShowType> Setting);
+	void SetPawn_2(TArray<ShowType> Setting);
+	bool getMovePointServer();
+	void clearMovePoint();
+	void LineBoost(Place place);
+	void FireWall(int32 player, Place place);
+	void VirusCheck(int32 player, Place place);
+	void NotFoundSwap(int32 player, Place from, Place to);
+	void NotFoundNoSwap(int32 player, Place from, Place to);
+	void ShowMoveablePoint(Place pawn);
+	void ShowMoveablePoint_Card(int32 PlayerID, TerminalCard card);
+	void Move(Place from, Place to);
+	void MoveToServer(Place from);
+	TArray<FPawnType> Refresh(int32 playerid);
 };
