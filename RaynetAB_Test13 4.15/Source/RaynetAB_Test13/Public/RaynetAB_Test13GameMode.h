@@ -24,7 +24,7 @@ public:
 	virtual void PostLogin(APlayerController * NewPlayer) override;
 	
 	UFUNCTION(Server, WithValidation, Reliable, Category = "Functions")
-		void Server_Move(FMove_C move, RoundRefreshState RoundAfter);
+		void Server_Move(FMove_C move);
 
 	UFUNCTION(Server, WithValidation, Reliable, Category = "Functions")
 		void Server_Win(bool HostWon);
@@ -36,7 +36,7 @@ public:
 		void Confirm(int32 roomNumber, int32 player, const TArray<ShowType>& Setting);
 
 	UFUNCTION(Server, WithValidation, Reliable, Category = "Functions")
-		void Refresh(int32 playerid,int32 roomNumber);
+		void Refresh(int32 roomNumber);
 
 	UFUNCTION(Server, WithValidation, Reliable, Category = "Functions")
 		void CreateNewRoom(int32 id);
@@ -48,16 +48,16 @@ public:
 		void ShowMovePointToServer(int32 roomNumber);
 
 	UFUNCTION(Server, WithValidation, Reliable, Category = "Functions")
-		void ShowMoveablePoint_Card(int32 roomNumber, int32 playerID, TerminalCard card);
+		void ShowMoveablePoint_Card(int32 roomNumber, int32 playerID, TerminalCard card, const TArray<bool>& _terminal);
 
 	UFUNCTION(Server, WithValidation, Reliable, Category = "Functions")
 		void ClearMovePoint(int32 roomNumber);
 
 	UFUNCTION(Server, WithValidation, Reliable, Category = "Functions")
-		void LineBoost(int32 roomNumber, FVector2D place);
+		void LineBoost(int32 roomNumber, int32 playerID, FVector2D place, bool used);
 
 	UFUNCTION(Server, WithValidation, Reliable, Category = "Functions")
-		void FireWall(int32 roomNumber, int32 playerID, FVector2D place);
+		void FireWall(int32 roomNumber, int32 playerID, FVector2D place, bool used);
 
 	UFUNCTION(Server, WithValidation, Reliable, Category = "Functions")
 		void VirusCheck(int32 roomNumber, int32 playerID, FVector2D place);

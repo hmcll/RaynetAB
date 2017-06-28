@@ -11,7 +11,8 @@ bool ARaynetAB_Test13PlayerController::ShowMovePointToServer() {
 
 void ARaynetAB_Test13PlayerController::GotEnemyFinished_Implementation() {
 	auto a = Cast<ARaynetAB_Test13GameState>(GetWorld()->GetGameState());
-	a->roundRefresh = RoundRefreshState::None;
+	a->RefreshState = false;
+	ResetGotUpdate.Broadcast();
 }
 
 bool ARaynetAB_Test13PlayerController::GotEnemyFinished_Validate() {
@@ -20,7 +21,7 @@ bool ARaynetAB_Test13PlayerController::GotEnemyFinished_Validate() {
 
 void ARaynetAB_Test13PlayerController::GotUpdate_Implementation() {
 	auto a = Cast<ARaynetAB_Test13GameState>(GetWorld()->GetGameState());
-	a->RefreshState = false;
+	a->EnemyFinishedState = false;
 	ResetGotUpdate.Broadcast();
 }
 	
@@ -35,7 +36,7 @@ void ARaynetAB_Test13PlayerController::Confirm_Implementation(const TArray<ShowT
 
 void ARaynetAB_Test13PlayerController::Refresh_Implementation() {
 	
-	Cast<ARaynetAB_Test13GameMode>(GetWorld()->GetAuthGameMode())->Refresh(_PlayerState->id,_PlayerState->roomNumber);
+	Cast<ARaynetAB_Test13GameMode>(GetWorld()->GetAuthGameMode())->Refresh(_PlayerState->roomNumber);
 }
 
 void ARaynetAB_Test13PlayerController::ShowMoveablePoint_Implementation(FVector2D from) {
@@ -48,7 +49,7 @@ void ARaynetAB_Test13PlayerController::ShowMovePointToServer_SV_Implementation()
 
 void ARaynetAB_Test13PlayerController::ShowMoveablePoint_Card_Implementation(TerminalCard card) {
 	Cast<ARaynetAB_Test13GameMode>(GetWorld()->GetAuthGameMode())->ClearMovePoint(_PlayerState->roomNumber);
-	Cast<ARaynetAB_Test13GameMode>(GetWorld()->GetAuthGameMode())->ShowMoveablePoint_Card(_PlayerState -> roomNumber, _PlayerState->id, card);
+	Cast<ARaynetAB_Test13GameMode>(GetWorld()->GetAuthGameMode())->ShowMoveablePoint_Card(_PlayerState -> roomNumber, _PlayerState->id, card, _PlayerState->_terminal);
 }
 
 void ARaynetAB_Test13PlayerController::ClearMovePoint_Implementation() {
@@ -56,11 +57,11 @@ void ARaynetAB_Test13PlayerController::ClearMovePoint_Implementation() {
 }
 
 void ARaynetAB_Test13PlayerController::LineBoost_BP_Implementation(FVector2D place) {
-	Cast<ARaynetAB_Test13GameMode>(GetWorld()->GetAuthGameMode())->LineBoost(_PlayerState->roomNumber, place);
+	Cast<ARaynetAB_Test13GameMode>(GetWorld()->GetAuthGameMode())->LineBoost(_PlayerState->roomNumber, _PlayerState->id, place, _PlayerState->_terminal[(int32) TerminalCard::LineBoost]);
 }
 
 void ARaynetAB_Test13PlayerController::FireWall_BP_Implementation(FVector2D place) {
-	Cast<ARaynetAB_Test13GameMode>(GetWorld()->GetAuthGameMode())->FireWall(_PlayerState->roomNumber, _PlayerState->id, place);
+	Cast<ARaynetAB_Test13GameMode>(GetWorld()->GetAuthGameMode())->FireWall(_PlayerState->roomNumber, _PlayerState->id, place, _PlayerState->_terminal[(int32) TerminalCard::Firewall]);
 }
 
 void ARaynetAB_Test13PlayerController::VirusCheck_BP_Implementation(FVector2D place) {
@@ -84,8 +85,7 @@ void ARaynetAB_Test13PlayerController::MoveToServer_Implementation(FVector2D fro
 }
 
 void ARaynetAB_Test13PlayerController::Server_Move_Implementation(FMove_C move) {
-	RoundRefreshState to = _PlayerState->isHost && Cast<ARaynetAB_Test13GameState>(GetWorld()->GetGameState())->Flag_HostGoingFirst ? RoundRefreshState::Client : RoundRefreshState::Host;
-	Cast<ARaynetAB_Test13GameMode>(GetWorld()->GetAuthGameMode())->Server_Move(move, to);
+	Cast<ARaynetAB_Test13GameMode>(GetWorld()->GetAuthGameMode())->Server_Move(move);
 }
 
 void ARaynetAB_Test13PlayerController::Server_Win_Implementation(bool HostWon) {
@@ -102,21 +102,6 @@ void ARaynetAB_Test13PlayerController::changeState_Implementation(EGameState Sta
 
 void ARaynetAB_Test13PlayerController::SetHostGoingFirst_Implementation(bool HostGoingFirst) {
 	Cast<ARaynetAB_Test13GameState>(GetWorld()->GetGameState())->Flag_HostGoingFirst = HostGoingFirst;
-	if( HostGoingFirst )
-		if( _PlayerState->isHost ) {
-			_PlayerState->id = 0;
-		}
-		else {
-			_PlayerState->id = 1;
-		}
-	else
-		if( _PlayerState->isHost ) {
-			_PlayerState->id = 1;
-		}
-		else {
-			_PlayerState->id = 0;
-		}
-
 }
 
 

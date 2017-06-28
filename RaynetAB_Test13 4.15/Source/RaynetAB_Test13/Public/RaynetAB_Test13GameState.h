@@ -14,20 +14,14 @@ class RAYNETAB_TEST13_API ARaynetAB_Test13GameState: public AGameStateBase {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(BlueprintReadOnly, Replicated, Category = "Variable")
+	UPROPERTY(BlueprintReadWrite, Replicated, Category = "Variable")
 		TArray<FPawnType> Refresh;
-
-	UPROPERTY(BlueprintReadOnly, Replicated, Category = "Variable")
-		FChessboardPlayer RefreshPlayer;
-
-	UPROPERTY(BlueprintReadOnly, Replicated, Category = "Variable")
-		FChessboardPlayer RefreshPlayer_Enemy;
 
 	UPROPERTY(BlueprintReadWrite, Replicated, Category = "Variable")
 		bool RefreshState = false;
 	
 	UPROPERTY(BlueprintReadWrite, Replicated, Category = "Variable")
-		RoundRefreshState roundRefresh = RoundRefreshState::None;
+		bool EnemyFinishedState = false;
 
 	UPROPERTY(BlueprintReadWrite, Replicated, Category = "Variable")
 		bool Flag_HostWon = false;

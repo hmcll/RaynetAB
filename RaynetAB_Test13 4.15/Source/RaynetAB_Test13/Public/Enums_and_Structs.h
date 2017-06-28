@@ -10,17 +10,15 @@ enum class WinState: uint8 {
 	Normal, Win, fail,
 };
 
-UENUM(BlueprintType)
-enum class RoundRefreshState: uint8 {
-	Host, Client, None
-};
-
 UENUM ( BlueprintType )
 enum class ShowType:uint8 {
-	Back,
-	Link,
-	Virus,
-	FireWall,
+	BackE,
+	LinkE,
+	LinkM,
+	VirusE,
+	VirusM,
+	FireWallE,
+	FireWallM,
 	Null,
 };
 
@@ -47,18 +45,16 @@ enum class EGameState: uint8 {
 
 USTRUCT ( BlueprintType )
 struct FPawnType {
-	GENERATED_BODY()
+	GENERATED_BODY ()
 
-	UPROPERTY(BlueprintReadWrite, Category = "PawnType")
-		int32 playerid;
-	UPROPERTY ( BlueprintReadWrite, Category = "PawnType" )
+		UPROPERTY ( BlueprintReadWrite, Category = "PawnType" )
 		bool _IsShowingOff = false;
 	UPROPERTY ( BlueprintReadWrite, Category = "PawnType" )
 		bool _IsMovePoint = false;
 	UPROPERTY ( BlueprintReadWrite, Category = "PawnType" )
 		bool _IsLineBoosting = false;
-	//UPROPERTY (  BlueprintReadWrite, Category = "PawnType" )
-	//	bool _IsSelected = false;
+	//	UPROPERTY (  BlueprintReadWrite, Category = "PawnType" )
+	//		bool _IsSelected = false;
 	UPROPERTY ( BlueprintReadWrite, Category = "PawnType" )
 		ShowType _Type;
 };

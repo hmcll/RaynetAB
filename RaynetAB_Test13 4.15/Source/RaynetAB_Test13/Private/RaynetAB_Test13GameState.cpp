@@ -9,7 +9,7 @@ void ARaynetAB_Test13GameState::GetLifetimeReplicatedProps(TArray< FLifetimeProp
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 		
 	DOREPLIFETIME(ARaynetAB_Test13GameState, Refresh);
-	DOREPLIFETIME(ARaynetAB_Test13GameState, roundRefresh);
+	DOREPLIFETIME(ARaynetAB_Test13GameState, EnemyFinishedState);
 	DOREPLIFETIME(ARaynetAB_Test13GameState, RefreshState);
 	DOREPLIFETIME(ARaynetAB_Test13GameState, Flag_HostWon);
 	DOREPLIFETIME(ARaynetAB_Test13GameState, Flag_HostGoingFirst);
