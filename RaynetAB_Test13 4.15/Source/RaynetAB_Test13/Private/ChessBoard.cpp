@@ -203,7 +203,6 @@ TArray<FPawnType> UChessBoard::Refresh () {
 			EnumBoard.Add ( chessBoard[j][i]->toFPawnType () );
 		}
 	}
-
 	return EnumBoard;
 }
 Link::Link ( int32 player ) {

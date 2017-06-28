@@ -23,8 +23,6 @@ void ARaynetAB_Test13GameMode::PostLogin(APlayerController * NewPlayer) {
 			Playerstack[0]->_PlayerState = player1;
 			Playerstack[1]->_PlayerState = player2;
 			CreateNewRoom(id / 2);
-			Rooms[id / 2]->player1 = id - 1;
-			Rooms[id / 2]->player2 = id;
 			Cast<ARaynetAB_Test13GameState>(GameState)->_GameState = EGameState::Starting;
 			Cast<ARaynetAB_Test13PlayerController>(Playerstack[0])->AfterPostLogin();
 			Cast<ARaynetAB_Test13PlayerController>(Playerstack[1])->AfterPostLogin();

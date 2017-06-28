@@ -109,13 +109,11 @@ class RAYNETAB_TEST13_API UChessBoard :public UObject{
 	// left down cornor is 0,0 up right is 7,7
 	Board chessBoard;
 
+	int32 player1;
+	int32 player2;
 	
 	bool MovePointServer = false;
 public:
-
-	int32 player1;
-	int32 player2;
-
 	UChessBoard();
 	void SetPawn_1 ( TArray<ShowType> Setting );
 	void SetPawn_2 ( TArray<ShowType> Setting );
