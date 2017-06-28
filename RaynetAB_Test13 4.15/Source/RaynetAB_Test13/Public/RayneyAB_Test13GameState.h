@@ -30,17 +30,9 @@ struct FMove_C {
 UCLASS()
 class RAYNETAB_TEST13_API ARayneyAB_Test13GameState : public AGameStateBase
 {
-	GENERATED_BODY ()
-public:
-	UFUNCTION ( Server, Reliable, WithValidation , Category = "Function" )
-		void Server_SetPawn_Arrangement (bool Offensive,const TArray<ShowType>& Setting);
+	GENERATED_BODY()
 	
-	UFUNCTION ( Server, Reliable, WithValidation ,Category = "Function" )
-		void Server_Confirm ();
-
-	UFUNCTION ( Server, Reliable, WithValidation , Category = "Function" )
-		void Server_Move ( FMove_C move);
 	
-	UFUNCTION ( Server, Reliable, WithValidation , Category = "Function" )
-		void Server_Win ( bool EnemyWinState );
+	
+	
 };
