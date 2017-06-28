@@ -2,8 +2,7 @@
 
 #pragma once
 
-#include "Enums_and_Structs.h"
-#include "ChessBoard.generated.h"
+#include "GamePlayer.h"
 
 /**
  *
@@ -30,7 +29,7 @@ A place on the Board
 
 class Pawn {
 protected:
-	int32 _player;
+	TWeakObjectPtr<AGamePlayer> _player;
 	ShowType _type;
 	bool _IsMovePoint = false;
 public:
@@ -41,7 +40,7 @@ public:
 	bool isMovePoint () const;
 	virtual bool isMoveable () const = 0;
 	ShowType getType () const;
-	virtual	int32 getPlayer () const;
+	virtual	TWeakObjectPtr<AGamePlayer> getPlayer () const;
 };
 /*
 Common Features of Link and Virus
@@ -68,7 +67,7 @@ Link card
 class Link: public Moveable {
 public:
 	FPawnType toFPawnType () override;
-	Link ( int32 player );
+	Link ( TWeakObjectPtr<AGamePlayer> player );
 	~Link () override;
 };
 
@@ -79,7 +78,7 @@ Virus card
 class Virus: public Moveable {
 public:
 	FPawnType toFPawnType () override;
-	Virus ( int32  player );
+	Virus ( TWeakObjectPtr<AGamePlayer>  player );
 	~Virus () override;
 };
 
@@ -91,42 +90,40 @@ class Null: public Pawn {
 private:
 	bool _IsFireWallOn = false;
 	bool _IsMine = false;
-	int32 FireWallPlayer;
+	TWeakObjectPtr<AGamePlayer> FireWallPlayer;
 public:
 	FPawnType toFPawnType () override;
 	Null ();
 	void setFirewall ( const bool state );
 	bool isFirewallOn () const;	
-	int32 getPlayer () const override;
-	void setFireWallPlayer ( int32 player, bool Me);
+	TWeakObjectPtr<AGamePlayer> getPlayer () const override;
+	bool setFireWallPlayer ( TWeakObjectPtr<AGamePlayer> player, bool Me);
 	bool isMoveable () const override;
 	~Null () override;
 };
 
-UCLASS()
-class RAYNETAB_TEST13_API UChessBoard :public UObject{
-	GENERATED_BODY ()
+class ChessBoard {
 	// left down cornor is 0,0 up right is 7,7
 	Board chessBoard;
 
-	int32 player1;
-	int32 player2;
+	TWeakObjectPtr<AGamePlayer> _Me;
+	TWeakObjectPtr<AGamePlayer> _Enemy;
 	
 	bool MovePointServer = false;
 public:
-	UChessBoard();
-	void SetPawn_1 ( TArray<ShowType> Setting );
-	void SetPawn_2 ( TArray<ShowType> Setting );
+	ChessBoard ( TWeakObjectPtr<AGamePlayer> Me, TWeakObjectPtr<AGamePlayer> Enemy);
+	bool SetPawn_M ( TArray<ShowType> Setting );
+	bool SetPawn_E ( TArray<ShowType> Setting );
 	bool getMovePointServer ();
 	void clearMovePoint ();
-	void LineBoost ( int32 player, Place place, bool used );
-	void FireWall ( int32 player, Place place, bool used );
-	void VirusCheck ( int32 player, Place place );
-	void NotFoundSwap ( int32 player, Place from, Place to );
-	void NotFoundNoSwap ( int32 player, Place from, Place to );
-	void ShowMoveablePoint ( Place pawn );
-	void ShowMoveablePoint_Card ( int32 PlayerID, TerminalCard card, TArray<bool> _terminal );
-	void Move ( Place from, Place to );
-	void MoveToServer ( Place from);
+	bool LineBoost ( TWeakObjectPtr<AGamePlayer> player, Place place );
+	bool FireWall ( TWeakObjectPtr<AGamePlayer> player, Place place );
+	bool VirusCheck ( TWeakObjectPtr<AGamePlayer> player, Place place );
+	bool NotFoundSwap ( TWeakObjectPtr<AGamePlayer> player, Place from, Place to );
+	bool NotFoundNoSwap ( TWeakObjectPtr<AGamePlayer> player, Place from, Place to );
+	bool ShowMoveablePoint ( Place pawn );
+	void ShowMoveablePoint_Card ( int32 PlayerID, TerminalCard card );
+	bool Move ( Place from, Place to );
+	bool MoveToServer ( Place from );
 	TArray<FPawnType> Refresh ();
 };

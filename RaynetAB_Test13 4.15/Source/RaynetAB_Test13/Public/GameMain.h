@@ -23,7 +23,7 @@ public:
 		TWeakObjectPtr<AGamePlayer> Enemy;
 
 	UPROPERTY ( BlueprintReadWrite, Category = "Players" )
-		bool MeGoingFirst = true;
+	bool MeGoingFirst = true;
 
 	TSharedPtr<ChessBoard> chessBoard;
 
