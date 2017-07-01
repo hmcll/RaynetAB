@@ -52,7 +52,7 @@ struct FPawnType {
 //	UPROPERTY (  BlueprintReadWrite, Category = "PawnType" )
 //		bool _IsSelected = false;
 	UPROPERTY (  BlueprintReadWrite, Category = "PawnType" )
-		TEnumAsByte<ShowType> _Type;
+		ShowType _Type;
 };
 
 
@@ -83,7 +83,7 @@ public:
 	UPROPERTY ( BlueprintReadOnly )
 		TArray<bool>_terminal;
 	UPROPERTY ( BlueprintReadOnly )
-		TEnumAsByte<ServerShowingOff> Showingoff = ServerShowingOff::Null;
+		ServerShowingOff Showingoff = ServerShowingOff::Null;
 
 
 
